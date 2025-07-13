@@ -1,14 +1,4 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>سامانه غذا اصلی</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -449,26 +439,6 @@
         #audio-player {
             display: none;
         }
-
-        /* Profile picture upload */
-        .profile-upload-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .profile-pic-large {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-left: 15px;
-            border: 3px solid var(--primary-color);
-        }
-        
-        .profile-name-input {
-            flex: 1;
-        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
@@ -489,7 +459,7 @@
         <!-- Login Section -->
         <div id="login-section" class="card section-transition">
             <div class="header">
-                <img src="GR-logo.png" alt="GR Logo" class="logo" id="login-logo">
+                <img src="logo.png" alt="JR Logo" class="logo" id="login-logo">
                 <h1>سامانه ثبت غذای JR</h1>
             </div>
             <form id="login-form">
@@ -512,7 +482,7 @@
                     <i class="fas fa-sign-out-alt"></i> خروج
                 </button>
                 <div style="display: flex; align-items: center;">
-                    <img src="GR-logo.png" alt="GR Logo" class="logo" style="max-width: 80px;">
+                    <img src="logo.png" alt="JR Logo" class="logo" style="max-width: 80px;">
                     <h1 style="margin: 0 15px;">منوی اصلی</h1>
                     <img id="user-profile-pic" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
                 </div>
@@ -744,28 +714,7 @@
                     <label>نام کاربری</label>
                     <p id="profile-username"></p>
                 </div>
-                
                 <div class="form-group">
-                    <label>عکس پروفایل</label>
-                    <div class="profile-upload-container">
-                        <img id="profile-pic-large" src="profile-placeholder.png" class="profile-pic-large">
-                        <input type="file" id="profile-upload" accept="image/*" style="display: none;" onchange="updateProfilePicture(this)">
-                        <button type="button" class="btn" onclick="document.getElementById('profile-upload').click()">
-                            <i class="fas fa-upload"></i> تغییر عکس
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="profile-display-name">نام نمایشی</label>
-                    <input type="text" id="profile-display-name" class="profile-name-input">
-                </div>
-                
-                <button type="button" class="btn" onclick="saveProfileChanges()">
-                    <i class="fas fa-save"></i> ذخیره تغییرات
-                </button>
-                
-                <div class="form-group" style="margin-top: 20px;">
                     <label>تاریخ آخرین ورود</label>
                     <p id="profile-last-login"></p>
                 </div>
@@ -815,9 +764,9 @@
             
             <div class="card">
                 <div class="support-info">
-                    <p><strong>پشتیبانی فنی:</strong> جعفر رحیم</p>
+                    <p><strong>پشتیبانی فنی:</strong> جعفر رحیمی</p>
                     <p><strong>تلفن تماس:</strong> 09120370720</p>
-                    <p><strong>ایمیل:</strong> jafar.rahim@example.com</p>
+                    <p><strong>ایمیل:</strong> jafarrahimi25@yahoo.com</p>
                     <p>در صورت بروز هرگونه مشکل در سیستم، لطفاً با شماره فوق تماس حاصل فرمایید.</p>
                 </div>
             </div>
@@ -856,7 +805,7 @@
         function initializeStorage() {
             if (!localStorage.getItem('users')) {
                 localStorage.setItem('users', JSON.stringify([
-                    { username: 'abbas', password: '1335', displayName: 'کاربر', profilePic: 'profile-placeholder.png' }
+                    { username: 'abbas', password: '1335' }
                 ]));
             }
             
@@ -963,68 +912,981 @@
             }
         }
         
-        // Update profile picture
-        function updateProfilePicture(input) {
-            const file = input.files[0];
-            if (!file) return;
+        // Show Persian date picker when icon is clicked
+        function showDatePicker(inputId) {
+            // Remove any existing simple date picker
+            const existingPicker = document.querySelector('.simple-date-picker');
+            if (existingPicker) {
+                existingPicker.remove();
+            }
             
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('profile-pic-large').src = event.target.result;
-            };
-            reader.readAsDataURL(file);
+            const $input = $('#' + inputId);
+            
+            // Check if jQuery and persian-datepicker are loaded
+            if (typeof $ === 'undefined' || typeof $.fn.pDatepicker === 'undefined') {
+                // Fallback to simple date picker
+                const picker = createSimpleDatePicker(inputId);
+                picker.style.display = 'block';
+                
+                // Close picker when clicking outside
+                document.addEventListener('click', function closePicker(e) {
+                    if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
+                        picker.style.display = 'none';
+                        document.removeEventListener('click', closePicker);
+                    }
+                });
+                return;
+            }
+            
+            // Check if pDatepicker is initialized
+            if (!$input.data('pDatepicker')) {
+                try {
+                    // Initialize if not already done
+                    $input.pDatepicker({
+                        format: 'YYYY/MM/DD',
+                        autoClose: true,
+                        initialValue: false,
+                        calendar: {
+                            persian: {
+                                locale: 'fa'
+                            }
+                        },
+                        toolbox: {
+                            calendarSwitch: {
+                                enabled: false
+                            }
+                        },
+                        observer: true
+                    });
+                } catch (error) {
+                    console.error('Error initializing date picker:', error);
+                    // Fallback to simple date picker
+                    const picker = createSimpleDatePicker(inputId);
+                    picker.style.display = 'block';
+                    
+                    // Close picker when clicking outside
+                    document.addEventListener('click', function closePicker(e) {
+                        if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
+                            picker.style.display = 'none';
+                            document.removeEventListener('click', closePicker);
+                        }
+                    });
+                    return;
+                }
+            }
+            
+            // Show the date picker
+            try {
+                $input.pDatepicker('show');
+            } catch (error) {
+                console.error('Error showing date picker:', error);
+                // Fallback to simple date picker
+                const picker = createSimpleDatePicker(inputId);
+                picker.style.display = 'block';
+                
+                // Close picker when clicking outside
+                document.addEventListener('click', function closePicker(e) {
+                    if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
+                        picker.style.display = 'none';
+                        document.removeEventListener('click', closePicker);
+                    }
+                });
+            }
         }
         
-        // Save profile changes
-        function saveProfileChanges() {
-            const displayName = document.getElementById('profile-display-name').value;
-            const profilePic = document.getElementById('profile-pic-large').src;
+        // Convert Gregorian date to Persian date
+        function convertGregorianToPersian(persianInputId, gregorianDate) {
+            if (!gregorianDate) return;
             
-            const users = JSON.parse(localStorage.getItem('users'));
-            const currentUser = users[0];
+            try {
+                const date = new Date(gregorianDate);
+                if (typeof PersianDate !== 'undefined') {
+                    const persianDate = new PersianDate(date);
+                    const persianDateString = persianDate.format('YYYY/MM/DD');
+                    document.getElementById(persianInputId).value = persianDateString;
+                } else {
+                    // Simple fallback conversion
+                    const year = date.getFullYear();
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    
+                    // Simple Persian year calculation (approximate)
+                    const persianYear = year - 621;
+                    const persianDateString = `${persianYear}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+                    document.getElementById(persianInputId).value = persianDateString;
+                }
+            } catch (error) {
+                console.error('Error converting date:', error);
+                showToast('خطا در تبدیل تاریخ', true);
+            }
+        }
+        
+        // Simple Persian date picker fallback
+        function createSimpleDatePicker(inputId) {
+            const input = document.getElementById(inputId);
+            const container = document.createElement('div');
+            container.className = 'simple-date-picker';
+            container.style.cssText = `
+                position: absolute;
+                background: #333;
+                border: 1px solid #555;
+                border-radius: 8px;
+                padding: 10px;
+                z-index: 1000;
+                display: none;
+                color: white;
+            `;
             
-            currentUser.displayName = displayName || currentUser.username;
-            currentUser.profilePic = profilePic;
+            // Create calendar grid
+            const calendar = document.createElement('div');
+            calendar.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+                margin-top: 10px;
+            `;
             
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Update profile pictures in all sections
-            document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                img.src = profilePic;
+            // Add days of week
+            const daysOfWeek = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+            daysOfWeek.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.textContent = day;
+                dayElement.style.cssText = `
+                    text-align: center;
+                    padding: 5px;
+                    font-weight: bold;
+                    color: #ff6b00;
+                `;
+                calendar.appendChild(dayElement);
             });
             
-            showToast('تغییرات پروفایل با موفقیت ذخیره شد');
+            // Add current month days (simplified)
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.textContent = i;
+                dayElement.style.cssText = `
+                    text-align: center;
+                    padding: 5px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                    transition: background-color 0.3s;
+                `;
+                
+                dayElement.addEventListener('click', function() {
+                    const persianYear = today.getFullYear() - 621;
+                    const persianMonth = today.getMonth() + 1;
+                    const persianDateString = `${persianYear}/${persianMonth.toString().padStart(2, '0')}/${i.toString().padStart(2, '0')}`;
+                    input.value = persianDateString;
+                    container.style.display = 'none';
+                });
+                
+                dayElement.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#ff6b00';
+                });
+                
+                dayElement.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'transparent';
+                });
+                
+                calendar.appendChild(dayElement);
+            }
+            
+            container.appendChild(calendar);
+            document.body.appendChild(container);
+            
+            // Position the calendar
+            const rect = input.getBoundingClientRect();
+            container.style.left = rect.left + 'px';
+            container.style.top = (rect.bottom + 5) + 'px';
+            
+            return container;
+        }
+        
+        // Initialize Persian date pickers
+        function initializeDatePickers() {
+            // Destroy existing instances if any
+            if ($('#report-start-date').data('pDatepicker')) {
+                $('#report-start-date').pDatepicker('destroy');
+            }
+            if ($('#report-end-date').data('pDatepicker')) {
+                $('#report-end-date').pDatepicker('destroy');
+            }
+            
+            $('#report-start-date').pDatepicker({
+                format: 'YYYY/MM/DD',
+                autoClose: true,
+                initialValue: false,
+                calendar: {
+                    persian: {
+                        locale: 'fa'
+                    }
+                },
+                toolbox: {
+                    calendarSwitch: {
+                        enabled: false
+                    }
+                },
+                observer: true,
+                onSelect: function(unix) {
+                    console.log('Start date selected:', unix);
+                }
+            });
+            
+            $('#report-end-date').pDatepicker({
+                format: 'YYYY/MM/DD',
+                autoClose: true,
+                initialValue: false,
+                calendar: {
+                    persian: {
+                        locale: 'fa'
+                    }
+                },
+                toolbox: {
+                    calendarSwitch: {
+                        enabled: false
+                    }
+                },
+                observer: true,
+                onSelect: function(unix) {
+                    console.log('End date selected:', unix);
+                }
+            });
+        }
+        
+        // Validate date range
+        function validateDateRange() {
+            const startDateInput = document.getElementById('report-start-date').value;
+            const endDateInput = document.getElementById('report-end-date').value;
+            
+            if (startDateInput && endDateInput) {
+                const startDate = new PersianDate(startDateInput).toDate();
+                const endDate = new PersianDate(endDateInput).toDate();
+                
+                if (startDate > endDate) {
+                    showToast('تاریخ شروع نمی‌تواند بعد از تاریخ پایان باشد', true);
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Login functionality
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                // Record login activity
+                const userActivity = JSON.parse(localStorage.getItem('userActivity'));
+                userActivity[username] = {
+                    lastLogin: new Date().toISOString()
+                };
+                localStorage.setItem('userActivity', JSON.stringify(userActivity));
+                
+                showSection('dashboard-section');
+                showToast('ورود موفقیت‌آمیز بود');
+            } else {
+                showToast('نام کاربری یا رمز عبور اشتباه است', true);
+            }
+        });
+        
+        // Logout functionality
+        function logout() {
+            showSection('login-section');
+            document.getElementById('login-form').reset();
+        }
+        
+        // Load cities for food registration
+        function loadCities() {
+            const cities = JSON.parse(localStorage.getItem('cities'));
+            const citySelect = document.getElementById('city');
+            
+            citySelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+        
+        // Load restaurants for food registration
+        function loadRestaurants() {
+            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
+            const restaurantSelect = document.getElementById('restaurant');
+            
+            restaurantSelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
+            restaurants.forEach(restaurant => {
+                const option = document.createElement('option');
+                option.value = restaurant;
+                option.textContent = restaurant;
+                restaurantSelect.appendChild(option);
+            });
+        }
+        
+        // Load foods for selection in food registration
+        function loadFoodsForSelection() {
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            const foodSelects = document.querySelectorAll('.food-select');
+            
+            foodSelects.forEach(select => {
+                select.innerHTML = '<option value="">-- انتخاب غذا --</option>';
+                foods.forEach(food => {
+                    const option = document.createElement('option');
+                    option.value = food;
+                    option.textContent = food;
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        // Update companion fields based on count
+        function updateCompanionFields() {
+            const count = parseInt(document.getElementById('companion-count').value);
+            const container = document.getElementById('companion-fields');
+            
+            container.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                const field = document.createElement('div');
+                field.className = 'companion-field';
+                field.innerHTML = `
+                    <div class="form-group">
+                        <label>نام همراه ${i + 1}</label>
+                        <div style="display: flex;">
+                            <input type="text" class="companion-name">
+                            <button type="button" class="btn remove-companion" onclick="removeCompanionField(this)">حذف</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(field);
+            }
+        }
+        
+        // Remove companion field
+        function removeCompanionField(button) {
+            const field = button.closest('.companion-field');
+            field.remove();
+            
+            // Update the count
+            const currentCount = document.getElementById('companion-count');
+            currentCount.value = parseInt(currentCount.value) - 1;
+        }
+        
+        // Add food item to the form
+        function addFoodItem() {
+            const container = document.getElementById('food-items');
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            
+            const div = document.createElement('div');
+            div.className = 'food-item';
+            div.innerHTML = `
+                <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
+                <select class="food-select">
+                    <option value="">-- انتخاب غذا --</option>
+                </select>
+                <input type="number" class="food-count" min="1" value="1">
+            `;
+            
+            container.appendChild(div);
+            
+            // Load foods for the new select
+            const select = div.querySelector('.food-select');
+            foods.forEach(food => {
+                const option = document.createElement('option');
+                option.value = food;
+                option.textContent = food;
+                select.appendChild(option);
+            });
+        }
+        
+        // Remove food item from the form
+        function removeFoodItem(button) {
+            const item = button.closest('.food-item');
+            
+            // Don't allow removing the last food item
+            if (document.querySelectorAll('.food-item').length > 1) {
+                item.remove();
+            } else {
+                showToast('حداقل یک آیتم غذا باید وجود داشته باشد', true);
+            }
+        }
+        
+        // Register food request
+        document.getElementById('register-food-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const city = document.getElementById('city').value;
+            const companionCount = document.getElementById('companion-count').value;
+            const restaurant = document.getElementById('restaurant').value;
+            
+            // Get companion names
+            const companionNames = [];
+            document.querySelectorAll('.companion-name').forEach(input => {
+                if (input.value) {
+                    companionNames.push(input.value);
+                }
+            });
+            
+            // Get food items
+            const foodItems = [];
+            document.querySelectorAll('.food-item').forEach(item => {
+                const food = item.querySelector('.food-select').value;
+                const count = item.querySelector('.food-count').value;
+                if (food) {
+                    foodItems.push({ food, count });
+                }
+            });
+            
+            // Validate required fields
+            if (!fullname || !restaurant || foodItems.length === 0) {
+                showToast('لطفاً فیلدهای ضروری را پر کنید (نام، رستوران و حداقل یک غذا)', true);
+                return;
+            }
+            
+            // Create request object
+            const request = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                fullname,
+                city: city || 'ثبت نشده',
+                companionCount: companionCount || '0',
+                companionNames,
+                foodItems,
+                restaurant,
+                username: JSON.parse(localStorage.getItem('users'))[0].username
+            };
+            
+            // Save to localStorage
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            requests.push(request);
+            localStorage.setItem('foodRequests', JSON.stringify(requests));
+            
+            // Reset form
+            this.reset();
+            document.getElementById('companion-fields').innerHTML = '';
+            
+            // Reset food items to one
+            const foodItemsContainer = document.getElementById('food-items');
+            foodItemsContainer.innerHTML = `
+                <div class="food-item">
+                    <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
+                    <select class="food-select">
+                        <option value="">-- انتخاب غذا --</option>
+                    </select>
+                    <input type="number" class="food-count" min="1" value="1">
+                </div>
+            `;
+            loadFoodsForSelection();
+            
+            showToast('درخواست غذا با موفقیت ثبت شد');
+        });
+        
+        // Generate PDF for food request
+        function generateFoodPDF() {
+            const fullname = document.getElementById('fullname').value;
+            const city = document.getElementById('city').value;
+            const companionCount = document.getElementById('companion-count').value;
+            const restaurant = document.getElementById('restaurant').value;
+            
+            // Get food items
+            const foodItems = [];
+            document.querySelectorAll('.food-item').forEach(item => {
+                const food = item.querySelector('.food-select').value;
+                const count = item.querySelector('.food-count').value;
+                if (food) {
+                    foodItems.push({ food, count });
+                }
+            });
+            
+            if (!fullname || !restaurant || foodItems.length === 0) {
+                showToast('لطفاً فیلدهای ضروری را پر کنید (نام، رستوران و حداقل یک غذا)', true);
+                return;
+            }
+            
+            // Populate PDF section
+            document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
+            document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
+            document.getElementById('pdf-companion-count').textContent = companionCount || '0';
+            document.getElementById('pdf-restaurant').textContent = restaurant;
+            
+            // Add current Persian date
+            const persianDate = new PersianDate().format('YYYY/MM/DD');
+            document.getElementById('pdf-date').textContent = persianDate;
+            
+            const foodList = document.getElementById('pdf-foods');
+            foodList.innerHTML = '';
+            foodItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.food} × ${item.count}`;
+                foodList.appendChild(li);
+            });
+            
+            // Load admin settings
+            const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
+            document.getElementById('pdf-admin-name').textContent = adminSettings.adminName;
+            
+            if (adminSettings.signature) {
+                document.getElementById('pdf-signature').src = adminSettings.signature;
+                document.getElementById('pdf-signature').style.display = 'block';
+            } else {
+                document.getElementById('pdf-signature').style.display = 'none';
+            }
+            
+            // Show PDF section
+            document.getElementById('pdf-print-section').classList.remove('hidden');
+            
+            // Print after a short delay to allow rendering
+            setTimeout(() => {
+                window.print();
+                document.getElementById('pdf-print-section').classList.add('hidden');
+            }, 500);
+        }
+        
+        // Load reports
+        function loadReports() {
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            const tableBody = document.querySelector('#reports-table tbody');
+            
+            tableBody.innerHTML = '';
+            
+            requests.forEach(request => {
+                const tr = document.createElement('tr');
+                
+                // Format date
+                const date = new Date(request.date);
+                const persianDate = new PersianDate(date).format('YYYY/MM/DD');
+                
+                // Format food items
+                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
+                
+                tr.innerHTML = `
+                    <td>${persianDate}</td>
+                    <td>${request.fullname}</td>
+                    <td>${request.city}</td>
+                    <td>${request.companionCount}</td>
+                    <td>${foodItems}</td>
+                    <td>${request.restaurant}</td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        // Load filter options
+        function loadFilterOptions() {
+            const cities = JSON.parse(localStorage.getItem('cities'));
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            
+            const citySelect = document.getElementById('report-city');
+            const foodSelect = document.getElementById('report-food');
+            
+            citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+            
+            foodSelect.innerHTML = '<option value="">همه غذاها</option>';
+            foods.forEach(food => {
+                const option = document.createElement('option');
+                option.value = food;
+                option.textContent = food;
+                foodSelect.appendChild(option);
+            });
+        }
+        
+        // Filter reports
+        function filterReports() {
+            if (!validateDateRange()) return;
+            
+            const startDateInput = document.getElementById('report-start-date').value;
+            const endDateInput = document.getElementById('report-end-date').value;
+            const city = document.getElementById('report-city').value;
+            const food = document.getElementById('report-food').value;
+            
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            const tableBody = document.querySelector('#reports-table tbody');
+            
+            tableBody.innerHTML = '';
+            
+            // Convert Persian dates to Gregorian for comparison
+            let startDate = null;
+            if (startDateInput) {
+                const pd = new PersianDate(startDateInput);
+                startDate = pd.toDate();
+            }
+            
+            let endDate = null;
+            if (endDateInput) {
+                const pd = new PersianDate(endDateInput);
+                endDate = pd.toDate();
+                // Add one day to include the end date
+                endDate.setDate(endDate.getDate() + 1);
+            }
+            
+            requests.forEach(request => {
+                const requestDate = new Date(request.date);
+                
+                // Filter by date
+                if (startDate && requestDate < startDate) return;
+                if (endDate && requestDate >= endDate) return;
+                
+                // Filter by city
+                if (city && request.city !== city) return;
+                
+                // Filter by food
+                if (food) {
+                    const hasFood = request.foodItems.some(item => item.food === food);
+                    if (!hasFood) return;
+                }
+                
+                // If passed all filters, add to table
+                const tr = document.createElement('tr');
+                
+                // Format date
+                const persianDate = new PersianDate(requestDate).format('YYYY/MM/DD');
+                
+                // Format food items
+                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
+                
+                tr.innerHTML = `
+                    <td>${persianDate}</td>
+                    <td>${request.fullname}</td>
+                    <td>${request.city}</td>
+                    <td>${request.companionCount}</td>
+                    <td>${foodItems}</td>
+                    <td>${request.restaurant}</td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        // Export to Excel with Persian support
+        function exportToExcel() {
+            const table = document.getElementById('reports-table');
+            const rows = table.querySelectorAll('tr');
+            
+            if (rows.length <= 1) {
+                showToast('داده‌ای برای export وجود ندارد', true);
+                return;
+            }
+            
+            // Prepare data
+            const data = [];
+            
+            // Add headers
+            const headers = [];
+            rows[0].querySelectorAll('th').forEach(th => {
+                headers.push(th.textContent);
+            });
+            data.push(headers);
+            
+            // Add rows
+            for (let i = 1; i < rows.length; i++) {
+                const row = [];
+                rows[i].querySelectorAll('td').forEach(td => {
+                    row.push(td.textContent);
+                });
+                data.push(row);
+            }
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            
+            // Set right-to-left direction for the sheet
+            if (!ws['!views']) ws['!views'] = [];
+            ws['!views'].push({rtl: true});
+            
+            XLSX.utils.book_append_sheet(wb, ws, 'گزارش غذا');
+            
+            // Export
+            XLSX.writeFile(wb, 'گزارش_غذا.xlsx');
+        }
+        
+        // Load foods for settings
+        function loadFoods() {
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            const container = document.getElementById('food-list');
+            
+            container.innerHTML = '';
+            
+            if (foods.length === 0) {
+                container.innerHTML = '<p>هیچ غذایی ثبت نشده است</p>';
+                return;
+            }
+            
+            foods.forEach((food, index) => {
+                const div = document.createElement('div');
+                div.className = 'food-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="flex: 1;">${food}</span>
+                        <button type="button" class="btn remove-food" onclick="removeFood('${food}')">حذف</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Add food
+        function addFood() {
+            const foodInput = document.getElementById('new-food');
+            const foodName = foodInput.value.trim();
+            
+            if (!foodName) {
+                showToast('لطفاً نام غذا را وارد کنید', true);
+                return;
+            }
+            
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            
+            if (foods.includes(foodName)) {
+                showToast('این غذا قبلاً ثبت شده است', true);
+                return;
+            }
+            
+            foods.push(foodName);
+            localStorage.setItem('foods', JSON.stringify(foods));
+            
+            foodInput.value = '';
+            loadFoods();
+            showToast('غذا با موفقیت اضافه شد');
+        }
+        
+        // Remove food
+        function removeFood(foodName) {
+            const foods = JSON.parse(localStorage.getItem('foods'));
+            const updatedFoods = foods.filter(food => food !== foodName);
+            
+            localStorage.setItem('foods', JSON.stringify(updatedFoods));
+            loadFoods();
+            showToast('غذا با موفقیت حذف شد');
+        }
+        
+        // Load restaurants for settings
+        function loadRestaurantsForSettings() {
+            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
+            const container = document.getElementById('restaurant-list');
+            
+            container.innerHTML = '';
+            
+            if (restaurants.length === 0) {
+                container.innerHTML = '<p>هیچ رستورانی ثبت نشده است</p>';
+                return;
+            }
+            
+            restaurants.forEach((restaurant, index) => {
+                const div = document.createElement('div');
+                div.className = 'food-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="flex: 1;">${restaurant}</span>
+                        <button type="button" class="btn remove-food" onclick="removeRestaurant('${restaurant}')">حذف</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Add restaurant
+        function addRestaurant() {
+            const restaurantInput = document.getElementById('new-restaurant');
+            const restaurantName = restaurantInput.value.trim();
+            
+            if (!restaurantName) {
+                showToast('لطفاً نام رستوران را وارد کنید', true);
+                return;
+            }
+            
+            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
+            
+            if (restaurants.includes(restaurantName)) {
+                showToast('این رستوران قبلاً ثبت شده است', true);
+                return;
+            }
+            
+            restaurants.push(restaurantName);
+            localStorage.setItem('restaurants', JSON.stringify(restaurants));
+            
+            restaurantInput.value = '';
+            loadRestaurantsForSettings();
+            showToast('رستوران با موفقیت اضافه شد');
+        }
+        
+        // Remove restaurant
+        function removeRestaurant(restaurantName) {
+            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
+            const updatedRestaurants = restaurants.filter(r => r !== restaurantName);
+            
+            localStorage.setItem('restaurants', JSON.stringify(updatedRestaurants));
+            loadRestaurantsForSettings();
+            showToast('رستوران با موفقیت حذف شد');
+        }
+        
+        // Load cities for settings
+        function loadCitiesForSettings() {
+            const cities = JSON.parse(localStorage.getItem('cities'));
+            const container = document.getElementById('city-list');
+            
+            container.innerHTML = '';
+            
+            if (cities.length === 0) {
+                container.innerHTML = '<p>هیچ شهرستانی ثبت نشده است</p>';
+                return;
+            }
+            
+            cities.forEach((city, index) => {
+                const div = document.createElement('div');
+                div.className = 'food-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="flex: 1;">${city}</span>
+                        <button type="button" class="btn remove-food" onclick="removeCity('${city}')">حذف</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Add city
+        function addCity() {
+            const cityInput = document.getElementById('new-city');
+            const cityName = cityInput.value.trim();
+            
+            if (!cityName) {
+                showToast('لطفاً نام شهرستان را وارد کنید', true);
+                return;
+            }
+            
+            const cities = JSON.parse(localStorage.getItem('cities'));
+            
+            if (cities.includes(cityName)) {
+                showToast('این شهرستان قبلاً ثبت شده است', true);
+                return;
+            }
+            
+            cities.push(cityName);
+            localStorage.setItem('cities', JSON.stringify(cities));
+            
+            cityInput.value = '';
+            loadCitiesForSettings();
+            showToast('شهرستان با موفقیت اضافه شد');
+        }
+        
+        // Remove city
+        function removeCity(cityName) {
+            const cities = JSON.parse(localStorage.getItem('cities'));
+            const updatedCities = cities.filter(c => c !== cityName);
+            
+            localStorage.setItem('cities', JSON.stringify(updatedCities));
+            loadCitiesForSettings();
+            showToast('شهرستان با موفقیت حذف شد');
+        }
+        
+        // Load admin settings
+        function loadAdminSettings() {
+            const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
+            
+            document.getElementById('admin-name').value = adminSettings.adminName || '';
+            
+            const signaturePreview = document.getElementById('signature-preview');
+            if (adminSettings.signature) {
+                signaturePreview.src = adminSettings.signature;
+                signaturePreview.style.display = 'block';
+            } else {
+                signaturePreview.style.display = 'none';
+            }
+            
+            // Handle signature upload
+            document.getElementById('signature-upload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    signaturePreview.src = event.target.result;
+                    signaturePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Save admin settings
+        function saveAdminSettings() {
+            const adminName = document.getElementById('admin-name').value;
+            const signaturePreview = document.getElementById('signature-preview');
+            
+            const adminSettings = {
+                adminName,
+                signature: signaturePreview.style.display !== 'none' ? signaturePreview.src : ''
+            };
+            
+            localStorage.setItem('adminSettings', JSON.stringify(adminSettings));
+            showToast('تنظیمات با موفقیت ذخیره شد');
         }
         
         // Load profile
         function loadProfile() {
-            const user = JSON.parse(localStorage.getItem('users'))[0];
+            const username = JSON.parse(localStorage.getItem('users'))[0].username;
             const userActivity = JSON.parse(localStorage.getItem('userActivity')) || {};
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
             
-            document.getElementById('profile-username').textContent = user.username;
-            document.getElementById('profile-display-name').value = user.displayName || user.username;
-            document.getElementById('profile-pic-large').src = user.profilePic || 'profile-placeholder.png';
+            document.getElementById('profile-username').textContent = username;
             
-            // Update profile pictures in all sections
-            document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                img.src = user.profilePic || 'profile-placeholder.png';
-            });
-            
-            if (userActivity[user.username] && userActivity[user.username].lastLogin) {
-                const lastLogin = new Date(userActivity[user.username].lastLogin);
+            if (userActivity[username] && userActivity[username].lastLogin) {
+                const lastLogin = new Date(userActivity[username].lastLogin);
                 const persianDate = new PersianDate(lastLogin).format('YYYY/MM/DD HH:mm');
                 document.getElementById('profile-last-login').textContent = persianDate;
             } else {
                 document.getElementById('profile-last-login').textContent = 'اطلاعاتی موجود نیست';
             }
             
-            const userRequests = requests.filter(r => r.username === user.username).length;
+            const userRequests = requests.filter(r => r.username === username).length;
             document.getElementById('profile-request-count').textContent = userRequests;
         }
-
-        // بقیه توابع بدون تغییر باقی می‌مانند...
-        // [کدهای قبلی بدون تغییر باقی می‌مانند...]
+        
+        // Change password
+        document.getElementById('change-password-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            const users = JSON.parse(localStorage.getItem('users'));
+            const currentUser = users[0];
+            
+            if (currentUser.password !== currentPassword) {
+                showToast('رمز عبور فعلی اشتباه است', true);
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('رمز عبور جدید و تکرار آن مطابقت ندارند', true);
+                return;
+            }
+            
+            currentUser.password = newPassword;
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            this.reset();
+            showToast('رمز عبور با موفقیت تغییر یافت');
+        });
         
         // Initialize the app
         initializeStorage();
@@ -1055,9 +1917,5 @@
             }
         });
     </script>
-</body>
-</html>
-<!-- partial -->
-  
 </body>
 </html>
