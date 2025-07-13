@@ -439,6 +439,60 @@
         #audio-player {
             display: none;
         }
+        
+        /* New styles for registered foods section */
+        .registered-food-item {
+            background-color: rgba(51, 51, 51, 0.5);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .registered-food-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .registered-food-actions .btn {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        /* Profile picture upload styles */
+        .profile-pic-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-pic-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            margin-left: 20px;
+        }
+        
+        .profile-upload-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-upload-btn:hover {
+            background-color: #e05d00;
+        }
+        
+        #profile-pic-upload {
+            display: none;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
@@ -451,7 +505,7 @@
 <body>
     <!-- Audio Player (hidden) -->
     <audio id="audio-player" controls>
-        <source src="welcome.mp3" type="audio/mpeg">
+        <source src="https://j3rajerz.github.io/JR-ghaza/welcome.mp3" type="audio/mpeg">
         مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
     </audio>
 
@@ -459,7 +513,7 @@
         <!-- Login Section -->
         <div id="login-section" class="card section-transition">
             <div class="header">
-                <img src="logo.png" alt="JR Logo" class="logo" id="login-logo">
+                <img src="https://j3rajerz.github.io/JR-ghaza/GR-logo.png" alt="JR Logo" class="logo" id="login-logo">
                 <h1>سامانه ثبت غذای JR</h1>
             </div>
             <form id="login-form">
@@ -482,7 +536,7 @@
                     <i class="fas fa-sign-out-alt"></i> خروج
                 </button>
                 <div style="display: flex; align-items: center;">
-                    <img src="logo.png" alt="JR Logo" class="logo" style="max-width: 80px;">
+                    <img src="https://j3rajerz.github.io/JR-ghaza/GR-logo.png" alt="JR Logo" class="logo" style="max-width: 80px;">
                     <h1 style="margin: 0 15px;">منوی اصلی</h1>
                     <img id="user-profile-pic" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
                 </div>
@@ -492,6 +546,10 @@
                 <div class="card dashboard-item" onclick="showSection('register-food-section')">
                     <i class="fas fa-edit"></i>
                     <span>ثبت غذا</span>
+                </div>
+                <div class="card dashboard-item" onclick="showSection('registered-foods-section')">
+                    <i class="fas fa-list"></i>
+                    <span>غذاهای ثبت شده</span>
                 </div>
                 <div class="card dashboard-item" onclick="showSection('reports-section')">
                     <i class="fas fa-file-alt"></i>
@@ -570,6 +628,23 @@
                     <i class="fas fa-file-pdf"></i> تولید PDF
                 </button>
             </form>
+        </div>
+
+        <!-- Registered Foods Section -->
+        <div id="registered-foods-section" class="hidden section-transition">
+            <div class="menu-header">
+                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
+                    <i class="fas fa-arrow-left"></i> بازگشت
+                </button>
+                <h1>غذاهای ثبت شده</h1>
+                <img id="user-profile-pic-8" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
+            </div>
+            
+            <div class="card">
+                <div id="registered-foods-list">
+                    <!-- Registered food items will be populated here -->
+                </div>
+            </div>
         </div>
 
         <!-- Reports Section -->
@@ -710,7 +785,25 @@
             </div>
             
             <div class="card">
+                <div class="profile-pic-container">
+                    <img id="profile-pic-large" src="profile-placeholder.png" class="profile-pic-large">
+                    <div>
+                        <label for="profile-pic-upload" class="profile-upload-btn">
+                            <i class="fas fa-camera"></i> تغییر عکس پروفایل
+                        </label>
+                        <input type="file" id="profile-pic-upload" accept="image/*">
+                        <p style="margin-top: 5px; font-size: 12px; color: #aaa;">حداکثر سایز: 2MB</p>
+                    </div>
+                </div>
+                
                 <div class="form-group">
+                    <label for="profile-display-name">نام نمایشی</label>
+                    <input type="text" id="profile-display-name">
+                </div>
+                
+                <button class="btn" onclick="saveProfile()">ذخیره تغییرات</button>
+                
+                <div class="form-group" style="margin-top: 20px;">
                     <label>نام کاربری</label>
                     <p id="profile-username"></p>
                 </div>
@@ -805,7 +898,7 @@
         function initializeStorage() {
             if (!localStorage.getItem('users')) {
                 localStorage.setItem('users', JSON.stringify([
-                    { username: 'abbas', password: '1335' }
+                    { username: 'abbas', password: '1335', displayName: 'عباس', profilePic: '' }
                 ]));
             }
             
@@ -852,11 +945,6 @@
             if (!localStorage.getItem('userActivity')) {
                 localStorage.setItem('userActivity', JSON.stringify({}));
             }
-            
-            // Load logo from localStorage if available
-            if (localStorage.getItem('logo')) {
-                document.getElementById('login-logo').src = localStorage.getItem('logo');
-            }
         }
         
         // Show toast notification
@@ -898,6 +986,8 @@
                 loadCities();
                 loadRestaurants();
                 loadFoodsForSelection();
+            } else if (sectionId === 'registered-foods-section') {
+                loadRegisteredFoods();
             } else if (sectionId === 'reports-section') {
                 loadReports();
                 loadFilterOptions();
@@ -911,6 +1001,186 @@
                 loadProfile();
             }
         }
+        
+        // Load registered foods for the current user
+        function loadRegisteredFoods() {
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            const currentUser = JSON.parse(localStorage.getItem('users'))[0].username;
+            const container = document.getElementById('registered-foods-list');
+            
+            // Filter requests for current user and sort by date (newest first)
+            const userRequests = requests
+                .filter(r => r.username === currentUser)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            container.innerHTML = '';
+            
+            if (userRequests.length === 0) {
+                container.innerHTML = '<p>هیچ درخواست غذایی ثبت نشده است</p>';
+                return;
+            }
+            
+            userRequests.forEach(request => {
+                const div = document.createElement('div');
+                div.className = 'registered-food-item';
+                
+                // Format date
+                const date = new Date(request.date);
+                const persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
+                
+                // Format food items
+                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
+                
+                div.innerHTML = `
+                    <h3>${request.fullname} - ${request.city}</h3>
+                    <p><strong>تاریخ ثبت:</strong> ${persianDate}</p>
+                    <p><strong>رستوران:</strong> ${request.restaurant}</p>
+                    <p><strong>غذاها:</strong> ${foodItems}</p>
+                    <p><strong>تعداد همراه:</strong> ${request.companionCount}</p>
+                    ${request.companionNames.length > 0 ? `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
+                    
+                    <div class="registered-food-actions">
+                        <button class="btn" onclick="editFoodRequest('${request.id}')">
+                            <i class="fas fa-edit"></i> ویرایش
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteFoodRequest('${request.id}')">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+        
+        // Edit food request
+        function editFoodRequest(requestId) {
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            const request = requests.find(r => r.id.toString() === requestId.toString());
+            
+            if (!request) {
+                showToast('درخواست مورد نظر یافت نشد', true);
+                return;
+            }
+            
+            // Populate the form
+            document.getElementById('fullname').value = request.fullname;
+            document.getElementById('city').value = request.city;
+            document.getElementById('companion-count').value = request.companionCount;
+            document.getElementById('restaurant').value = request.restaurant;
+            
+            // Add companion fields
+            const companionContainer = document.getElementById('companion-fields');
+            companionContainer.innerHTML = '';
+            
+            request.companionNames.forEach(name => {
+                const field = document.createElement('div');
+                field.className = 'companion-field';
+                field.innerHTML = `
+                    <div class="form-group">
+                        <label>نام همراه</label>
+                        <div style="display: flex;">
+                            <input type="text" class="companion-name" value="${name}">
+                            <button type="button" class="btn remove-companion" onclick="removeCompanionField(this)">حذف</button>
+                        </div>
+                    </div>
+                `;
+                companionContainer.appendChild(field);
+            });
+            
+            // Add food items
+            const foodItemsContainer = document.getElementById('food-items');
+            foodItemsContainer.innerHTML = '';
+            
+            request.foodItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'food-item';
+                div.innerHTML = `
+                    <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
+                    <select class="food-select">
+                        <option value="">-- انتخاب غذا --</option>
+                    </select>
+                    <input type="number" class="food-count" min="1" value="${item.count}">
+                `;
+                
+                foodItemsContainer.appendChild(div);
+                
+                // Load foods for this select
+                const foods = JSON.parse(localStorage.getItem('foods'));
+                const select = div.querySelector('.food-select');
+                
+                foods.forEach(food => {
+                    const option = document.createElement('option');
+                    option.value = food;
+                    option.textContent = food;
+                    if (food === item.food) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+            
+            // Store the request ID in the form for update
+            document.getElementById('register-food-form').dataset.editingId = requestId;
+            
+            showSection('register-food-section');
+            showToast('درخواست برای ویرایش بارگذاری شد');
+        }
+        
+        // Delete food request
+        function deleteFoodRequest(requestId) {
+            if (!confirm('آیا از حذف این درخواست مطمئن هستید؟')) {
+                return;
+            }
+            
+            const requests = JSON.parse(localStorage.getItem('foodRequests'));
+            const updatedRequests = requests.filter(r => r.id.toString() !== requestId.toString());
+            
+            localStorage.setItem('foodRequests', JSON.stringify(updatedRequests));
+            loadRegisteredFoods();
+            showToast('درخواست با موفقیت حذف شد');
+        }
+        
+        // Save profile changes
+        function saveProfile() {
+            const displayName = document.getElementById('profile-display-name').value;
+            const currentUser = JSON.parse(localStorage.getItem('users'))[0];
+            
+            if (displayName) {
+                currentUser.displayName = displayName;
+                localStorage.setItem('users', JSON.stringify([currentUser]));
+                showToast('تغییرات با موفقیت ذخیره شد');
+            }
+        }
+        
+        // Initialize profile picture upload
+        document.getElementById('profile-pic-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('حجم فایل باید کمتر از 2MB باشد', true);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Update all profile pictures
+                document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+                    img.src = event.target.result;
+                });
+                document.getElementById('profile-pic-large').src = event.target.result;
+                
+                // Save to user data
+                const currentUser = JSON.parse(localStorage.getItem('users'))[0];
+                currentUser.profilePic = event.target.result;
+                localStorage.setItem('users', JSON.stringify([currentUser]));
+                
+                showToast('عکس پروفایل با موفقیت تغییر کرد');
+            };
+            reader.readAsDataURL(file);
+        });
         
         // Show Persian date picker when icon is clicked
         function showDatePicker(inputId) {
@@ -1192,6 +1462,13 @@
                 };
                 localStorage.setItem('userActivity', JSON.stringify(userActivity));
                 
+                // Update profile pictures if available
+                if (user.profilePic) {
+                    document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+                        img.src = user.profilePic;
+                    });
+                }
+                
                 showSection('dashboard-section');
                 showToast('ورود موفقیت‌آمیز بود');
             } else {
@@ -1354,9 +1631,12 @@
                 return;
             }
             
-            // Create request object
+            // Check if we're editing an existing request
+            const isEditing = this.dataset.editingId;
+            
+            // Create/update request object
             const request = {
-                id: Date.now(),
+                id: isEditing ? parseInt(this.dataset.editingId) : Date.now(),
                 date: new Date().toISOString(),
                 fullname,
                 city: city || 'ثبت نشده',
@@ -1369,7 +1649,19 @@
             
             // Save to localStorage
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            requests.push(request);
+            
+            if (isEditing) {
+                // Update existing request
+                const index = requests.findIndex(r => r.id.toString() === this.dataset.editingId);
+                if (index !== -1) {
+                    requests[index] = request;
+                }
+                delete this.dataset.editingId;
+            } else {
+                // Add new request
+                requests.push(request);
+            }
+            
             localStorage.setItem('foodRequests', JSON.stringify(requests));
             
             // Reset form
@@ -1389,7 +1681,10 @@
             `;
             loadFoodsForSelection();
             
-            showToast('درخواست غذا با موفقیت ثبت شد');
+            showToast(isEditing ? 'درخواست غذا با موفقیت ویرایش شد' : 'درخواست غذا با موفقیت ثبت شد');
+            
+            // Return to registered foods section
+            showSection('registered-foods-section');
         });
         
         // Generate PDF for food request
@@ -1842,21 +2137,30 @@
         
         // Load profile
         function loadProfile() {
-            const username = JSON.parse(localStorage.getItem('users'))[0].username;
+            const currentUser = JSON.parse(localStorage.getItem('users'))[0];
             const userActivity = JSON.parse(localStorage.getItem('userActivity')) || {};
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
             
-            document.getElementById('profile-username').textContent = username;
+            document.getElementById('profile-username').textContent = currentUser.username;
+            document.getElementById('profile-display-name').value = currentUser.displayName || '';
             
-            if (userActivity[username] && userActivity[username].lastLogin) {
-                const lastLogin = new Date(userActivity[username].lastLogin);
+            // Set profile picture if available
+            if (currentUser.profilePic) {
+                document.getElementById('profile-pic-large').src = currentUser.profilePic;
+                document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+                    img.src = currentUser.profilePic;
+                });
+            }
+            
+            if (userActivity[currentUser.username] && userActivity[currentUser.username].lastLogin) {
+                const lastLogin = new Date(userActivity[currentUser.username].lastLogin);
                 const persianDate = new PersianDate(lastLogin).format('YYYY/MM/DD HH:mm');
                 document.getElementById('profile-last-login').textContent = persianDate;
             } else {
                 document.getElementById('profile-last-login').textContent = 'اطلاعاتی موجود نیست';
             }
             
-            const userRequests = requests.filter(r => r.username === username).length;
+            const userRequests = requests.filter(r => r.username === currentUser.username).length;
             document.getElementById('profile-request-count').textContent = userRequests;
         }
         
