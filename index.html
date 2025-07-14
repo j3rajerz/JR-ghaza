@@ -627,6 +627,9 @@
                 <button type="button" class="btn btn-secondary" onclick="generateFoodPDF()" style="margin-top: 10px;">
                     <i class="fas fa-file-pdf"></i> تولید PDF
                 </button>
+                <button type="button" class="btn btn-secondary" id="new-food-request-btn" style="margin-top: 10px;">
+    <i class="fas fa-plus"></i> ثبت جدید
+</button>
             </form>
         </div>
 
@@ -719,6 +722,11 @@
                 <h1>تنظیمات سیستم</h1>
                 <img id="user-profile-pic-4" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
             </div>
+            <div class="form-group">
+    <button type="button" class="btn btn-secondary" onclick="exportAllData()">دانلود پشتیبان اطلاعات</button>
+    <input type="file" id="import-data-file" style="display:none" accept=".json" onchange="importAllData(event)">
+    <button type="button" class="btn btn-secondary" onclick="document.getElementById('import-data-file').click()">بارگذاری اطلاعات از فایل</button>
+</div>
             
             <div class="card">
                 <h2>مدیریت غذاها</h2>
@@ -1004,23 +1012,23 @@
         
         // Load registered foods for the current user
         function loadRegisteredFoods() {
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            const currentUser = JSON.parse(localStorage.getItem('users'))[0].username;
-            const container = document.getElementById('registered-foods-list');
-            
-            // Filter requests for current user and sort by date (newest first)
-            const userRequests = requests
-                .filter(r => r.username === currentUser)
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            container.innerHTML = '';
-            
-            if (userRequests.length === 0) {
-                container.innerHTML = '<p>هیچ درخواست غذایی ثبت نشده است</p>';
-                return;
-            }
-            
-            userRequests.forEach(request => {
+    const requests = JSON.parse(localStorage.getItem('foodRequests'));
+    const currentUser = localStorage.getItem('activeUser'); // اصلاح این خط
+    const container = document.getElementById('registered-foods-list');
+    
+    // Filter requests for current user and sort by date (newest first)
+    const userRequests = requests
+        .filter(r => r.username === currentUser)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    container.innerHTML = '';
+    
+    if (userRequests.length === 0) {
+        container.innerHTML = '<p>هیچ درخواست غذایی ثبت نشده است</p>';
+        return;
+    }
+    
+    userRequests.forEach(request => {
                 const div = document.createElement('div');
                 div.className = 'registered-food-item';
                 
@@ -1143,44 +1151,52 @@
         
         // Save profile changes
         function saveProfile() {
-            const displayName = document.getElementById('profile-display-name').value;
-            const currentUser = JSON.parse(localStorage.getItem('users'))[0];
-            
-            if (displayName) {
-                currentUser.displayName = displayName;
-                localStorage.setItem('users', JSON.stringify([currentUser]));
-                showToast('تغییرات با موفقیت ذخیره شد');
-            }
-        }
+    const displayName = document.getElementById('profile-display-name').value;
+    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
+    const users = JSON.parse(localStorage.getItem('users'));
+    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
+
+    if (displayName) {
+        currentUser.displayName = displayName;
+        // ذخیره تغییرات در آرایه users
+        const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        showToast('تغییرات با موفقیت ذخیره شد');
+    }
+}
         
         // Initialize profile picture upload
         document.getElementById('profile-pic-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            // Check file size (max 2MB)
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('حجم فایل باید کمتر از 2MB باشد', true);
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                // Update all profile pictures
-                document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                    img.src = event.target.result;
-                });
-                document.getElementById('profile-pic-large').src = event.target.result;
-                
-                // Save to user data
-                const currentUser = JSON.parse(localStorage.getItem('users'))[0];
-                currentUser.profilePic = event.target.result;
-                localStorage.setItem('users', JSON.stringify([currentUser]));
-                
-                showToast('عکس پروفایل با موفقیت تغییر کرد');
-            };
-            reader.readAsDataURL(file);
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        showToast('حجم فایل باید کمتر از 2MB باشد', true);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        // Update all profile pictures
+        document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+            img.src = event.target.result;
         });
+        document.getElementById('profile-pic-large').src = event.target.result;
+
+        // Save to user data
+        const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
+        const users = JSON.parse(localStorage.getItem('users'));
+        const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
+        currentUser.profilePic = event.target.result;
+        // ذخیره تغییرات در آرایه users
+        const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+        showToast('عکس پروفایل با موفقیت تغییر کرد');
+    };
+    reader.readAsDataURL(file);
+});
         
         // Show Persian date picker when icon is clicked
         function showDatePicker(inputId) {
@@ -1445,42 +1461,48 @@
         }
         
         // Login functionality
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const users = JSON.parse(localStorage.getItem('users'));
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // Record login activity
-                const userActivity = JSON.parse(localStorage.getItem('userActivity'));
-                userActivity[username] = {
-                    lastLogin: new Date().toISOString()
-                };
-                localStorage.setItem('userActivity', JSON.stringify(userActivity));
-                
-                // Update profile pictures if available
-                if (user.profilePic) {
-                    document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                        img.src = user.profilePic;
-                    });
-                }
-                
-                showSection('dashboard-section');
-                showToast('ورود موفقیت‌آمیز بود');
-            } else {
-                showToast('نام کاربری یا رمز عبور اشتباه است', true);
-            }
-        });
+        // ...existing code...
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    const users = JSON.parse(localStorage.getItem('users'));
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+        // Record login activity
+        const userActivity = JSON.parse(localStorage.getItem('userActivity'));
+        userActivity[username] = {
+            lastLogin: new Date().toISOString()
+        };
+        localStorage.setItem('userActivity', JSON.stringify(userActivity));
+        
+        // Update profile pictures if available
+        if (user.profilePic) {
+            document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+                img.src = user.profilePic;
+            });
+        }
+
+        // ذخیره نام کاربری فعال در localStorage
+        localStorage.setItem('activeUser', user.username);
+
+        showSection('dashboard-section');
+        showToast('ورود موفقیت‌آمیز بود');
+    } else {
+        showToast('نام کاربری یا رمز عبور اشتباه است', true);
+    }
+});
+// ...existing code...
         
         // Logout functionality
         function logout() {
-            showSection('login-section');
-            document.getElementById('login-form').reset();
-        }
+    localStorage.removeItem('activeUser'); // اضافه کن
+    showSection('login-section');
+    document.getElementById('login-form').reset();
+}
         
         // Load cities for food registration
         function loadCities() {
@@ -1644,7 +1666,8 @@
                 companionNames,
                 foodItems,
                 restaurant,
-                username: JSON.parse(localStorage.getItem('users'))[0].username
+                username: localStorage.getItem('activeUser')
+                
             };
             
             // Save to localStorage
@@ -2137,60 +2160,65 @@
         
         // Load profile
         function loadProfile() {
-            const currentUser = JSON.parse(localStorage.getItem('users'))[0];
-            const userActivity = JSON.parse(localStorage.getItem('userActivity')) || {};
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            
-            document.getElementById('profile-username').textContent = currentUser.username;
-            document.getElementById('profile-display-name').value = currentUser.displayName || '';
-            
-            // Set profile picture if available
-            if (currentUser.profilePic) {
-                document.getElementById('profile-pic-large').src = currentUser.profilePic;
-                document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                    img.src = currentUser.profilePic;
-                });
-            }
-            
-            if (userActivity[currentUser.username] && userActivity[currentUser.username].lastLogin) {
-                const lastLogin = new Date(userActivity[currentUser.username].lastLogin);
-                const persianDate = new PersianDate(lastLogin).format('YYYY/MM/DD HH:mm');
-                document.getElementById('profile-last-login').textContent = persianDate;
-            } else {
-                document.getElementById('profile-last-login').textContent = 'اطلاعاتی موجود نیست';
-            }
-            
-            const userRequests = requests.filter(r => r.username === currentUser.username).length;
-            document.getElementById('profile-request-count').textContent = userRequests;
-        }
+    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
+    const users = JSON.parse(localStorage.getItem('users'));
+    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
+    const userActivity = JSON.parse(localStorage.getItem('userActivity')) || {};
+    const requests = JSON.parse(localStorage.getItem('foodRequests'));
+
+    document.getElementById('profile-username').textContent = currentUser.username;
+    document.getElementById('profile-display-name').value = currentUser.displayName || '';
+
+    // Set profile picture if available
+    if (currentUser.profilePic) {
+        document.getElementById('profile-pic-large').src = currentUser.profilePic;
+        document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
+            img.src = currentUser.profilePic;
+        });
+    }
+
+    if (userActivity[currentUser.username] && userActivity[currentUser.username].lastLogin) {
+        const lastLogin = new Date(userActivity[currentUser.username].lastLogin);
+        const persianDate = new PersianDate(lastLogin).format('YYYY/MM/DD HH:mm');
+        document.getElementById('profile-last-login').textContent = persianDate;
+    } else {
+        document.getElementById('profile-last-login').textContent = 'اطلاعاتی موجود نیست';
+    }
+
+    const userRequests = requests.filter(r => r.username === currentUser.username).length;
+    document.getElementById('profile-request-count').textContent = userRequests;
+}
         
         // Change password
         document.getElementById('change-password-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            
-            const users = JSON.parse(localStorage.getItem('users'));
-            const currentUser = users[0];
-            
-            if (currentUser.password !== currentPassword) {
-                showToast('رمز عبور فعلی اشتباه است', true);
-                return;
-            }
-            
-            if (newPassword !== confirmPassword) {
-                showToast('رمز عبور جدید و تکرار آن مطابقت ندارند', true);
-                return;
-            }
-            
-            currentUser.password = newPassword;
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            this.reset();
-            showToast('رمز عبور با موفقیت تغییر یافت');
-        });
+    e.preventDefault();
+
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
+    const users = JSON.parse(localStorage.getItem('users'));
+    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
+
+    if (currentUser.password !== currentPassword) {
+        showToast('رمز عبور فعلی اشتباه است', true);
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showToast('رمز عبور جدید و تکرار آن مطابقت ندارند', true);
+        return;
+    }
+
+    currentUser.password = newPassword;
+    // ذخیره تغییرات در آرایه users
+    const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+    this.reset();
+    showToast('رمز عبور با موفقیت تغییر یافت');
+});
         
         // Initialize the app
         initializeStorage();
@@ -2220,6 +2248,65 @@
                 console.log('Persian datepicker library loaded successfully');
             }
         });
+        // در انتهای اسکریپت اضافه کنید
+function exportAllData() {
+    const data = {
+        users: localStorage.getItem('users'),
+        foods: localStorage.getItem('foods'),
+        restaurants: localStorage.getItem('restaurants'),
+        cities: localStorage.getItem('cities'),
+        foodRequests: localStorage.getItem('foodRequests'),
+        adminSettings: localStorage.getItem('adminSettings'),
+        userActivity: localStorage.getItem('userActivity')
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'jr-ghaza-backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('فایل پشتیبان دانلود شد');
+}
+
+function importAllData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.users) localStorage.setItem('users', data.users);
+            if (data.foods) localStorage.setItem('foods', data.foods);
+            if (data.restaurants) localStorage.setItem('restaurants', data.restaurants);
+            if (data.cities) localStorage.setItem('cities', data.cities);
+            if (data.foodRequests) localStorage.setItem('foodRequests', data.foodRequests);
+            if (data.adminSettings) localStorage.setItem('adminSettings', data.adminSettings);
+            if (data.userActivity) localStorage.setItem('userActivity', data.userActivity);
+            showToast('اطلاعات با موفقیت بارگذاری شد');
+            location.reload();
+        } catch (err) {
+            showToast('خطا در بارگذاری فایل', true);
+        }
+    };
+    reader.readAsText(file);
+}
+document.getElementById('new-food-request-btn').addEventListener('click', function() {
+    document.getElementById('register-food-form').reset();
+    document.getElementById('companion-fields').innerHTML = '';
+    // ریست آیتم‌های غذا به یک مورد
+    const foodItemsContainer = document.getElementById('food-items');
+    foodItemsContainer.innerHTML = `
+        <div class="food-item">
+            <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
+            <select class="food-select">
+                <option value="">-- انتخاب غذا --</option>
+            </select>
+            <input type="number" class="food-count" min="1" value="1">
+        </div>
+    `;
+    loadFoodsForSelection();
+});
     </script>
 </body>
 </html>
