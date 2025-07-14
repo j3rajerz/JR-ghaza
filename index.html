@@ -1712,6 +1712,9 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             
             // Return to registered foods section
             showSection('registered-foods-section');
+            
+            // نمایش PDF بلافاصله بعد از ثبت موفق
+            generateFoodPDF();
         });
         
         // Generate PDF for food request
