@@ -1640,13 +1640,15 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             
             // Get food items
             const foodItems = [];
-            document.querySelectorAll('.food-item').forEach(item => {
-                const food = item.querySelector('.food-select').value;
-                const count = item.querySelector('.food-count').value;
-                if (food) {
-                    foodItems.push({ food, count });
-                }
-            });
+document.querySelectorAll('.food-item').forEach(item => {
+    const foodSelect = item.querySelector('.food-select');
+    const foodCount = item.querySelector('.food-count');
+    const food = foodSelect ? foodSelect.value : '';
+    const count = foodCount ? foodCount.value : '';
+    if (food) {
+        foodItems.push({ food, count });
+    }
+});
             
             // Validate required fields
             if (!fullname || !restaurant) {
@@ -1717,16 +1719,6 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             const city = document.getElementById('city').value;
             const companionCount = document.getElementById('companion-count').value;
             const restaurant = document.getElementById('restaurant').value;
-
-            // Get food items
-            const foodItems = [];
-            document.querySelectorAll('.food-item').forEach(item => {
-                const food = item.querySelector('.food-select').value;
-                const count = item.querySelector('.food-count').value;
-                if (food) {
-                    foodItems.push({ food, count });
-                }
-            });
 
             if (!fullname || !restaurant) {
                 showToast('لطفاً نام و رستوران را وارد کنید', true);
