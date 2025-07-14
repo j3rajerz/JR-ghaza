@@ -624,12 +624,9 @@
                     </select>
                 </div>
                 <button type="submit" class="btn">ثبت درخواست</button>
-                <button type="button" class="btn btn-secondary" onclick="generateFoodPDF()" style="margin-top: 10px;">
-                    <i class="fas fa-file-pdf"></i> تولید PDF
-                </button>
                 <button type="button" class="btn btn-secondary" id="new-food-request-btn" style="margin-top: 10px;">
-    <i class="fas fa-plus"></i> ثبت جدید
-</button>
+                    <i class="fas fa-plus"></i> ثبت جدید
+                </button>
             </form>
         </div>
 
@@ -1710,10 +1707,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             
             showToast(isEditing ? 'درخواست غذا با موفقیت ویرایش شد' : 'درخواست غذا با موفقیت ثبت شد');
             
-            // Return to registered foods section
-            showSection('registered-foods-section');
-            
-            // نمایش PDF بلافاصله بعد از ثبت موفق
+            // فقط نامه PDF را نمایش بده
             generateFoodPDF();
         });
         
