@@ -1649,8 +1649,8 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             });
             
             // Validate required fields
-            if (!fullname || !restaurant || foodItems.length === 0) {
-                showToast('لطفاً فیلدهای ضروری را پر کنید (نام، رستوران و حداقل یک غذا)', true);
+            if (!fullname || !restaurant) {
+                showToast('لطفاً نام و رستوران را وارد کنید', true);
                 return;
             }
             
@@ -1728,8 +1728,8 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
                 }
             });
 
-            if (!fullname || !restaurant || foodItems.length === 0) {
-                showToast('لطفاً فیلدهای ضروری را پر کنید (نام، رستوران و حداقل یک غذا)', true);
+            if (!fullname || !restaurant) {
+                showToast('لطفاً نام و رستوران را وارد کنید', true);
                 return;
             }
 
