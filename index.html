@@ -1013,53 +1013,57 @@
         // Load registered foods for the current user
         function loadRegisteredFoods() {
     const requests = JSON.parse(localStorage.getItem('foodRequests'));
-    const currentUser = localStorage.getItem('activeUser'); // اصلاح این خط
+    const currentUser = localStorage.getItem('activeUser');
     const container = document.getElementById('registered-foods-list');
-    
+
     // Filter requests for current user and sort by date (newest first)
     const userRequests = requests
         .filter(r => r.username === currentUser)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
-    
+
     container.innerHTML = '';
-    
+
     if (userRequests.length === 0) {
         container.innerHTML = '<p>هیچ درخواست غذایی ثبت نشده است</p>';
         return;
     }
-    
+
     userRequests.forEach(request => {
-                const div = document.createElement('div');
-                div.className = 'registered-food-item';
-                
-                // Format date
-                const date = new Date(request.date);
-                const persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
-                
-                // Format food items
-                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
-                
-                div.innerHTML = `
-                    <h3>${request.fullname} - ${request.city}</h3>
-                    <p><strong>تاریخ ثبت:</strong> ${persianDate}</p>
-                    <p><strong>رستوران:</strong> ${request.restaurant}</p>
-                    <p><strong>غذاها:</strong> ${foodItems}</p>
-                    <p><strong>تعداد همراه:</strong> ${request.companionCount}</p>
-                    ${request.companionNames.length > 0 ? `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
-                    
-                    <div class="registered-food-actions">
-                        <button class="btn" onclick="editFoodRequest('${request.id}')">
-                            <i class="fas fa-edit"></i> ویرایش
-                        </button>
-                        <button class="btn btn-secondary" onclick="deleteFoodRequest('${request.id}')">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(div);
-            });
+        const div = document.createElement('div');
+        div.className = 'registered-food-item';
+
+        // Format date
+        const date = new Date(request.date);
+        let persianDate;
+        if (typeof PersianDate !== 'undefined') {
+            persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
+        } else {
+            persianDate = date.toLocaleString('fa-IR'); // یا هر فرمت دلخواه میلادی
         }
+
+        // Format food items
+        const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
+
+        div.innerHTML = `
+            <h3>${request.fullname} - ${request.city}</h3>
+            <p><strong>تاریخ ثبت:</strong> ${persianDate}</p>
+            <p><strong>رستوران:</strong> ${request.restaurant}</p>
+            <p><strong>غذاها:</strong> ${foodItems}</p>
+            <p><strong>تعداد همراه:</strong> ${request.companionCount}</p>
+            ${request.companionNames.length > 0 ? `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
+            <div class="registered-food-actions">
+                <button class="btn" onclick="editFoodRequest('${request.id}')">
+                    <i class="fas fa-edit"></i> ویرایش
+                </button>
+                <button class="btn btn-secondary" onclick="deleteFoodRequest('${request.id}')">
+                    <i class="fas fa-trash"></i> حذف
+                </button>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
         
         // Edit food request
         function editFoodRequest(requestId) {
