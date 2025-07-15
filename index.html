@@ -1715,61 +1715,71 @@ document.querySelectorAll('.food-item').forEach(item => {
         
         // Generate PDF for food request
         function generateFoodPDF() {
-            const fullname = document.getElementById('fullname').value;
-            const city = document.getElementById('city').value;
-            const companionCount = document.getElementById('companion-count').value;
-            const restaurant = document.getElementById('restaurant').value;
+    // خواندن اطلاعات فرم
+    const fullname = document.getElementById('fullname').value;
+    const city = document.getElementById('city').value;
+    const companionCount = document.getElementById('companion-count').value;
+    const restaurant = document.getElementById('restaurant').value;
 
-            if (!fullname || !restaurant) {
-                showToast('لطفاً نام و رستوران را وارد کنید', true);
-                return;
-            }
-
-            // Populate PDF section
-            document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
-            document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
-            document.getElementById('pdf-companion-count').textContent = companionCount || '0';
-            document.getElementById('pdf-restaurant').textContent = restaurant;
-
-            // Add current Persian date or fallback to Gregorian
-            let persianDate;
-            if (typeof PersianDate !== 'undefined') {
-                persianDate = new PersianDate().format('YYYY/MM/DD');
-            } else {
-                const now = new Date();
-                persianDate = now.toLocaleDateString('fa-IR'); // یا هر فرمت دلخواه میلادی
-            }
-            document.getElementById('pdf-date').textContent = persianDate;
-
-            const foodList = document.getElementById('pdf-foods');
-            foodList.innerHTML = '';
-            foodItems.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.food} × ${item.count}`;
-                foodList.appendChild(li);
-            });
-
-            // Load admin settings
-            const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
-            document.getElementById('pdf-admin-name').textContent = adminSettings.adminName;
-
-            if (adminSettings.signature) {
-                document.getElementById('pdf-signature').src = adminSettings.signature;
-                document.getElementById('pdf-signature').style.display = 'block';
-            } else {
-                document.getElementById('pdf-signature').style.display = 'none';
-            }
-
-            // Show PDF section
-            document.getElementById('pdf-print-section').classList.remove('hidden');
-
-            // Print after a short delay to allow rendering
-            setTimeout(() => {
-                window.print();
-                document.getElementById('pdf-print-section').classList.add('hidden');
-            }, 500);
+    // خواندن آیتم‌های غذا از فرم
+    const foodItems = [];
+    document.querySelectorAll('.food-item').forEach(item => {
+        const foodSelect = item.querySelector('.food-select');
+        const foodCount = item.querySelector('.food-count');
+        const food = foodSelect ? foodSelect.value : '';
+        const count = foodCount ? foodCount.value : '';
+        if (food) {
+            foodItems.push({ food, count });
         }
-        
+    });
+
+    if (!fullname || !restaurant) {
+        showToast('لطفاً نام و رستوران را وارد کنید', true);
+        return;
+    }
+
+    // مقداردهی بخش PDF
+    document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
+    document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
+    document.getElementById('pdf-companion-count').textContent = companionCount || '0';
+    document.getElementById('pdf-restaurant').textContent = restaurant;
+
+    // تاریخ شمسی یا میلادی
+    let persianDate;
+    if (typeof PersianDate !== 'undefined') {
+        persianDate = new PersianDate().format('YYYY/MM/DD');
+    } else {
+        const now = new Date();
+        persianDate = now.toLocaleDateString('fa-IR');
+    }
+    document.getElementById('pdf-date').textContent = persianDate;
+
+    // لیست غذاها
+    const foodList = document.getElementById('pdf-foods');
+    foodList.innerHTML = '';
+    foodItems.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.food} × ${item.count}`;
+        foodList.appendChild(li);
+    });
+
+    // اطلاعات مسئول و امضا
+    const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
+    document.getElementById('pdf-admin-name').textContent = adminSettings.adminName || '';
+    if (adminSettings.signature) {
+        document.getElementById('pdf-signature').src = adminSettings.signature;
+        document.getElementById('pdf-signature').style.display = 'block';
+    } else {
+        document.getElementById('pdf-signature').style.display = 'none';
+    }
+
+    // نمایش بخش نامه و پرینت
+    document.getElementById('pdf-print-section').classList.remove('hidden');
+    setTimeout(() => {
+        window.print();
+        document.getElementById('pdf-print-section').classList.add('hidden');
+    }, 500);
+}
         // Load reports
         function loadReports() {
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
