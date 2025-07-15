@@ -1624,13 +1624,12 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         document.getElementById('register-food-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // مقداردهی و حذف فاصله‌های اضافی
     const fullname = document.getElementById('fullname').value.trim();
     const city = document.getElementById('city').value.trim();
     const companionCount = document.getElementById('companion-count').value;
     const restaurant = document.getElementById('restaurant').value.trim();
 
-    // اعتبارسنجی نام و رستوران
+    // اعتبارسنجی فقط همینجا
     if (!fullname) {
         showToast('لطفاً نام را وارد کنید', true);
         return;
@@ -1639,25 +1638,26 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         showToast('لطفاً رستوران را انتخاب کنید', true);
         return;
     }
-            
-            // Get food items
-            const foodItems = [];
-document.querySelectorAll('.food-item').forEach(item => {
-    const foodSelect = item.querySelector('.food-select');
-    const foodCount = item.querySelector('.food-count');
-    const food = foodSelect ? foodSelect.value : '';
-    const count = foodCount ? foodCount.value : '';
-    if (food) {
-        foodItems.push({ food, count });
-    }
-});
-            
-            // Validate required fields
-            if (!fullname || !restaurant) {
-                showToast('لطفاً نام و رستوران را وارد کنید', true);
-                return;
-            }
-            
+
+    // دریافت نام همراهان
+    const companionNames = [];
+    document.querySelectorAll('.companion-name').forEach(input => {
+        if (input.value) {
+            companionNames.push(input.value);
+        }
+    });
+
+    // دریافت غذاها
+    const foodItems = [];
+    document.querySelectorAll('.food-item').forEach(item => {
+        const foodSelect = item.querySelector('.food-select');
+        const foodCount = item.querySelector('.food-count');
+        const food = foodSelect ? foodSelect.value : '';
+        const count = foodCount ? foodCount.value : '';
+        if (food) {
+            foodItems.push({ food, count });
+        }
+    });   
             // Check if we're editing an existing request
             const isEditing = this.dataset.editingId;
             
