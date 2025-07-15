@@ -1521,17 +1521,16 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         
         // Load restaurants for food registration
         function loadRestaurants() {
-            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
-            const restaurantSelect = document.getElementById('restaurant');
-            
-            restaurantSelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
-            restaurants.forEach(restaurant => {
-                const option = document.createElement('option');
-                option.value = restaurant;
-                option.textContent = restaurant;
-                restaurantSelect.appendChild(option);
-            });
-        }
+    const restaurants = JSON.parse(localStorage.getItem('restaurants'));
+    const restaurantSelect = document.getElementById('restaurant');
+    restaurantSelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
+    restaurants.forEach(restaurant => {
+        const option = document.createElement('option');
+        option.value = restaurant;
+        option.textContent = restaurant;
+        restaurantSelect.appendChild(option);
+    });
+}
         
         // Load foods for selection in food registration
         function loadFoodsForSelection() {
@@ -1623,20 +1622,23 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         
         // Register food request
         document.getElementById('register-food-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const fullname = document.getElementById('fullname').value;
-            const city = document.getElementById('city').value;
-            const companionCount = document.getElementById('companion-count').value;
-            const restaurant = document.getElementById('restaurant').value;
-            
-            // Get companion names
-            const companionNames = [];
-            document.querySelectorAll('.companion-name').forEach(input => {
-                if (input.value) {
-                    companionNames.push(input.value);
-                }
-            });
+    e.preventDefault();
+
+    // مقداردهی و حذف فاصله‌های اضافی
+    const fullname = document.getElementById('fullname').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const companionCount = document.getElementById('companion-count').value;
+    const restaurant = document.getElementById('restaurant').value.trim();
+
+    // اعتبارسنجی نام و رستوران
+    if (!fullname) {
+        showToast('لطفاً نام را وارد کنید', true);
+        return;
+    }
+    if (!restaurant) {
+        showToast('لطفاً رستوران را انتخاب کنید', true);
+        return;
+    }
             
             // Get food items
             const foodItems = [];
