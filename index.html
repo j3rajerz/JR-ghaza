@@ -1013,7 +1013,7 @@
     const currentUser = localStorage.getItem('activeUser');
     const container = document.getElementById('registered-foods-list');
 
-    // Filter requests for current user and sort by date (newest first)
+    // فیلتر درخواست‌های کاربر جاری و مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
     const userRequests = requests
         .filter(r => r.username === currentUser)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1029,16 +1029,16 @@
         const div = document.createElement('div');
         div.className = 'registered-food-item';
 
-        // Format date
+        // فرمت تاریخ
         const date = new Date(request.date);
         let persianDate;
         if (typeof PersianDate !== 'undefined') {
             persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
         } else {
-            persianDate = date.toLocaleString('fa-IR'); // یا هر فرمت دلخواه میلادی
+            persianDate = date.toLocaleString('fa-IR');
         }
 
-        // Format food items
+        // فرمت غذاها
         const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
 
         div.innerHTML = `
@@ -1047,13 +1047,17 @@
             <p><strong>رستوران:</strong> ${request.restaurant}</p>
             <p><strong>غذاها:</strong> ${foodItems}</p>
             <p><strong>تعداد همراه:</strong> ${request.companionCount}</p>
-            ${request.companionNames.length > 0 ? `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
+            ${request.companionNames.length > 0 ? 
+              `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
             <div class="registered-food-actions">
                 <button class="btn" onclick="editFoodRequest('${request.id}')">
                     <i class="fas fa-edit"></i> ویرایش
                 </button>
                 <button class="btn btn-secondary" onclick="deleteFoodRequest('${request.id}')">
                     <i class="fas fa-trash"></i> حذف
+                </button>
+                <button class="btn" onclick="printFoodRequest('${request.id}')">
+                    <i class="fas fa-print"></i> چاپ
                 </button>
             </div>
         `;
@@ -1624,16 +1628,17 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         document.getElementById('register-food-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    // اعتبارسنجی فیلدهای ضروری
     const fullname = document.getElementById('fullname').value.trim();
     const city = document.getElementById('city').value.trim();
     const companionCount = document.getElementById('companion-count').value;
     const restaurant = document.getElementById('restaurant').value.trim();
 
-    // اعتبارسنجی فقط همینجا
     if (!fullname) {
-        showToast('لطفاً نام را وارد کنید', true);
+        showToast('لطفاً نام و نام خانوادگی را وارد کنید', true);
         return;
     }
+    
     if (!restaurant) {
         showToast('لطفاً رستوران را انتخاب کنید', true);
         return;
@@ -1642,117 +1647,140 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     // دریافت نام همراهان
     const companionNames = [];
     document.querySelectorAll('.companion-name').forEach(input => {
-        if (input.value) {
-            companionNames.push(input.value);
+        if (input.value.trim()) {
+            companionNames.push(input.value.trim());
         }
     });
 
     // دریافت غذاها
     const foodItems = [];
+    let hasEmptyFood = false;
+    
     document.querySelectorAll('.food-item').forEach(item => {
         const foodSelect = item.querySelector('.food-select');
         const foodCount = item.querySelector('.food-count');
-        const food = foodSelect ? foodSelect.value : '';
+        const food = foodSelect ? foodSelect.value.trim() : '';
         const count = foodCount ? foodCount.value : '';
-        if (food) {
-            foodItems.push({ food, count });
-        }
-    });   
-            // Check if we're editing an existing request
-            const isEditing = this.dataset.editingId;
-            
-            // Create/update request object
-            const request = {
-                id: isEditing ? parseInt(this.dataset.editingId) : Date.now(),
-                date: new Date().toISOString(),
-                fullname,
-                city: city || 'ثبت نشده',
-                companionCount: companionCount || '0',
-                companionNames,
-                foodItems,
-                restaurant,
-                username: localStorage.getItem('activeUser')
-                
-            };
-            
-            // Save to localStorage
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            
-            if (isEditing) {
-                // Update existing request
-                const index = requests.findIndex(r => r.id.toString() === this.dataset.editingId);
-                if (index !== -1) {
-                    requests[index] = request;
-                }
-                delete this.dataset.editingId;
-            } else {
-                // Add new request
-                requests.push(request);
-            }
-            
-            localStorage.setItem('foodRequests', JSON.stringify(requests));
-            
-            // Reset form
-            this.reset();
-            document.getElementById('companion-fields').innerHTML = '';
-            
-            // Reset food items to one
-            const foodItemsContainer = document.getElementById('food-items');
-            foodItemsContainer.innerHTML = `
-                <div class="food-item">
-                    <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-                    <select class="food-select">
-                        <option value="">-- انتخاب غذا --</option>
-                    </select>
-                    <input type="number" class="food-count" min="1" value="1">
-                </div>
-            `;
-            loadFoodsForSelection();
-            
-            showToast(isEditing ? 'درخواست غذا با موفقیت ویرایش شد' : 'درخواست غذا با موفقیت ثبت شد');
-            
-            // فقط نامه PDF را نمایش بده
-            generateFoodPDF();
-        });
         
-        // Generate PDF for food request
-        function generateFoodPDF() {
-    // خواندن اطلاعات فرم
-    const fullname = document.getElementById('fullname').value;
-    const city = document.getElementById('city').value;
-    const companionCount = document.getElementById('companion-count').value;
-    const restaurant = document.getElementById('restaurant').value;
-
-    // خواندن آیتم‌های غذا از فرم
-    const foodItems = [];
-    document.querySelectorAll('.food-item').forEach(item => {
-        const foodSelect = item.querySelector('.food-select');
-        const foodCount = item.querySelector('.food-count');
-        const food = foodSelect ? foodSelect.value : '';
-        const count = foodCount ? foodCount.value : '';
-        if (food) {
+        if (!food) {
+            hasEmptyFood = true;
+        } else {
             foodItems.push({ food, count });
         }
     });
 
-    if (!fullname || !restaurant) {
-        showToast('لطفاً نام و رستوران را وارد کنید', true);
+    if (hasEmptyFood || foodItems.length === 0) {
+        showToast('لطفاً حداقل یک غذا را انتخاب کنید', true);
         return;
     }
 
-    // مقداردهی بخش PDF
+    // ایجاد شیء درخواست
+    const request = {
+        id: this.dataset.editingId ? parseInt(this.dataset.editingId) : Date.now(),
+        date: new Date().toISOString(),
+        fullname,
+        city: city || 'ثبت نشده',
+        companionCount: companionCount || '0',
+        companionNames,
+        foodItems,
+        restaurant,
+        username: localStorage.getItem('activeUser')
+    };
+
+    // ذخیره در localStorage
+    const requests = JSON.parse(localStorage.getItem('foodRequests'));
+    
+    if (this.dataset.editingId) {
+        // ویرایش درخواست موجود
+        const index = requests.findIndex(r => r.id.toString() === this.dataset.editingId);
+        if (index !== -1) {
+            requests[index] = request;
+        }
+        delete this.dataset.editingId;
+    } else {
+        // افزودن درخواست جدید
+        requests.push(request);
+    }
+    
+    localStorage.setItem('foodRequests', JSON.stringify(requests));
+
+    // ریست فرم
+    this.reset();
+    document.getElementById('companion-fields').innerHTML = '';
+    
+    // ریست آیتم‌های غذا به یک مورد
+    const foodItemsContainer = document.getElementById('food-items');
+    foodItemsContainer.innerHTML = `
+        <div class="food-item">
+            <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
+            <select class="food-select">
+                <option value="">-- انتخاب غذا --</option>
+            </select>
+            <input type="number" class="food-count" min="1" value="1">
+        </div>
+    `;
+    loadFoodsForSelection();
+    
+    showToast(this.dataset.editingId ? 'درخواست غذا با موفقیت ویرایش شد' : 'درخواست غذا با موفقیت ثبت شد');
+    
+    // نمایش نامه PDF
+    generateFoodPDF(request);
+});
+        
+        // Generate PDF for food request
+        function generateFoodPDF(requestData = null) {
+    // اگر داده از طریق پارامتر نیامده، از فرم بخوان
+    let fullname, city, companionCount, restaurant, foodItems, date;
+    
+    if (requestData) {
+        // استفاده از داده‌های ارسال شده
+        fullname = requestData.fullname;
+        city = requestData.city;
+        companionCount = requestData.companionCount;
+        restaurant = requestData.restaurant;
+        foodItems = requestData.foodItems;
+        date = new Date(requestData.date);
+    } else {
+        // خواندن از فرم
+        fullname = document.getElementById('fullname').value.trim();
+        city = document.getElementById('city').value.trim();
+        companionCount = document.getElementById('companion-count').value;
+        restaurant = document.getElementById('restaurant').value.trim();
+        
+        // خواندن غذاها از فرم
+        foodItems = [];
+        document.querySelectorAll('.food-item').forEach(item => {
+            const foodSelect = item.querySelector('.food-select');
+            const foodCount = item.querySelector('.food-count');
+            const food = foodSelect ? foodSelect.value.trim() : '';
+            const count = foodCount ? foodCount.value : '';
+            if (food) {
+                foodItems.push({ food, count });
+            }
+        });
+        
+        date = new Date();
+    }
+
+    // اعتبارسنجی نهایی
+    if (!fullname || !restaurant || foodItems.length === 0) {
+        console.error("داده‌های ضروری پر نشده‌اند");
+        return;
+    }
+
+    // پر کردن اطلاعات در بخش PDF
     document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
     document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
     document.getElementById('pdf-companion-count').textContent = companionCount || '0';
     document.getElementById('pdf-restaurant').textContent = restaurant;
 
-    // تاریخ شمسی یا میلادی
+    // تاریخ شمسی
     let persianDate;
     if (typeof PersianDate !== 'undefined') {
-        persianDate = new PersianDate().format('YYYY/MM/DD');
+        persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
     } else {
-        const now = new Date();
-        persianDate = now.toLocaleDateString('fa-IR');
+        // Fallback به تاریخ میلادی
+        persianDate = date.toLocaleString('fa-IR');
     }
     document.getElementById('pdf-date').textContent = persianDate;
 
@@ -1761,27 +1789,34 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     foodList.innerHTML = '';
     foodItems.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = `${item.food} × ${item.count}`;
+        li.textContent = `${item.food} (${item.count} عدد)`;
         foodList.appendChild(li);
     });
 
     // اطلاعات مسئول و امضا
     const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
-    document.getElementById('pdf-admin-name').textContent = adminSettings.adminName || '';
+    document.getElementById('pdf-admin-name').textContent = adminSettings.adminName || 'مسئول امور اداری';
+    
+    const signatureImg = document.getElementById('pdf-signature');
     if (adminSettings.signature) {
-        document.getElementById('pdf-signature').src = adminSettings.signature;
-        document.getElementById('pdf-signature').style.display = 'block';
+        signatureImg.src = adminSettings.signature;
+        signatureImg.style.display = 'block';
     } else {
-        document.getElementById('pdf-signature').style.display = 'none';
+        signatureImg.style.display = 'none';
     }
 
-    // نمایش بخش نامه و پرینت
+    // نمایش بخش چاپ و پرینت
     document.getElementById('pdf-print-section').classList.remove('hidden');
+    
+    // تأخیر برای اطمینان از رندر شدن کامل قبل از پرینت
     setTimeout(() => {
         window.print();
-        document.getElementById('pdf-print-section').classList.add('hidden');
+        document.getElementById('pdf-print-section').classlassList.add('hidden');
     }, 500);
 }
+
+
+
         // Load reports
         function loadReports() {
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
@@ -2318,6 +2353,16 @@ document.getElementById('new-food-request-btn').addEventListener('click', functi
     `;
     loadFoodsForSelection();
 });
+function printFoodRequest(requestId) {
+    const requests = JSON.parse(localStorage.getItem('foodRequests'));
+    const request = requests.find(r => r.id.toString() === requestId.toString());
+    
+    if (request) {
+        generateFoodPDF(request);
+    } else {
+        showToast('درخواست مورد نظر یافت نشد', true);
+    }
+}
     </script>
 </body>
 </html>
