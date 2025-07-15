@@ -1,2360 +1,2352 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه ثبت غذای JR</title>
-    <style>
-        :root {
-            --primary-color: #ff6b00;
-            --dark-color: #000;
-            --light-color: #fff;
-            --shadow-color: rgba(255, 255, 255, 0.1);
-            --border-radius: 8px;
-            --box-shadow: 0 0 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.1);
-            --transition: all 0.3s ease;
-            --card-glow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px rgba(255, 255, 255, 0.3);
-        }
+  <meta charset="UTF-8">
+  <title>S.GH---JR</title>
+  
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--dark-color);
-            color: var(--light-color);
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, #000 0%, #222 100%);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            max-width: 150px;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            text-shadow: 0 0 5px rgba(255, 107, 0, 0.5);
-        }
-
-        h2 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .card {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            z-index: -1;
-            background: linear-gradient(45deg, #fff, transparent);
-            opacity: 0.1;
-            border-radius: var(--border-radius);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-glow);
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--light-color);
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 16px;
-            transition: var(--transition);
-            text-decoration: none;
-            text-align: center;
-            box-shadow: 0 0 5px rgba(255, 107, 0, 0.5);
-        }
-
-        .btn:hover {
-            background-color: #e05d00;
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
-        }
-
-        .btn-secondary {
-            background-color: #333;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background-color: #444;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #eee;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: var(--border-radius);
-            background-color: rgba(51, 51, 51, 0.8);
-            color: var(--light-color);
-            font-size: 16px;
-            transition: var(--transition);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .dashboard-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 150px;
-            font-size: 24px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dashboard-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            z-index: -1;
-        }
-
-        .dashboard-item i {
-            font-size: 40px;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .back-btn {
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .back-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            z-index: -1;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: right;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        th {
-            background-color: rgba(51, 51, 51, 0.8);
-            font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: rgba(42, 42, 42, 0.5);
-        }
-
-        tr:hover {
-            background-color: rgba(85, 85, 85, 0.3);
-        }
-
-        .companion-fields {
-            margin-top: 10px;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-            padding: 10px;
-            border-radius: var(--border-radius);
-        }
-
-        .companion-field {
-            margin-bottom: 10px;
-        }
-
-        .remove-companion {
-            background-color: rgba(255, 59, 59, 0.8);
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-right: 10px;
-            box-shadow: 0 0 5px rgba(255, 59, 59, 0.5);
-        }
-
-        .remove-companion:hover {
-            background-color: rgba(255, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-        }
-
-        .add-companion {
-            margin-top: 10px;
-        }
-
-        .food-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .food-item select, .food-item input {
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .add-food {
-            margin-top: 10px;
-        }
-
-        .remove-food {
-            background-color: rgba(255, 59, 59, 0.8);
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-right: 10px;
-            box-shadow: 0 0 5px rgba(255, 59, 59, 0.5);
-        }
-
-        .remove-food:hover {
-            background-color: rgba(255, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-        }
-
-        .signature-preview {
-            max-width: 200px;
-            max-height: 100px;
-            margin-top: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: block;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-
-        .print-only {
-            display: none;
-        }
-
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .print-section, .print-section * {
-                visibility: visible;
-            }
-            .print-section {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                color: #000;
-                background-color: #fff;
-                padding: 20px;
-            }
-            .no-print {
-                display: none;
-            }
-            .print-only {
-                display: block;
-            }
-        }
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(76, 175, 80, 0.9);
-            color: white;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            z-index: 1000;
-            display: none;
-            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
-        }
-
-        .toast.error {
-            background-color: rgba(244, 67, 54, 0.9);
-            box-shadow: 0 0 15px rgba(244, 67, 54, 0.7);
-        }
-
-        @keyframes fadeIn {
-            from {opacity: 0; transform: translateY(-20px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        @keyframes fadeOut {
-            from {opacity: 1; transform: translateY(0);}
-            to {opacity: 0; transform: translateY(-20px);}
-        }
-
-        /* Section transitions */
-        .section-transition {
-            animation: sectionFadeIn 0.5s ease-out;
-        }
-
-        @keyframes sectionFadeIn {
-            from {opacity: 0; transform: translateY(20px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        /* Support section */
-        .support-info {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius);
-        }
-
-        .support-info p {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .github-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: var(--primary-color);
-            text-decoration: none;
-            border: 1px solid var(--primary-color);
-            padding: 8px 15px;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .github-link:hover {
-            background-color: var(--primary-color);
-            color: var(--light-color);
-        }
-
-        /* Persian date picker */
-        .persian-date-picker {
-            direction: rtl;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .persian-date-picker input {
-            text-align: right;
-        }
-
-        /* New styles for date picker icon */
-        .date-picker-icon {
-            cursor: pointer;
-            margin-right: 10px;
-            font-size: 20px;
-            color: var(--primary-color);
-        }
-        
-        /* Style for date picker container */
-        .date-picker-container {
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Style for profile picture in menu */
-        .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-left: 15px;
-            border: 2px solid var(--primary-color);
-        }
-        
-        /* Style for menu header */
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        /* Style for audio player */
-        #audio-player {
-            display: none;
-        }
-        
-        /* New styles for registered foods section */
-        .registered-food-item {
-            background-color: rgba(51, 51, 51, 0.5);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: var(--border-radius);
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        .registered-food-actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .registered-food-actions .btn {
-            padding: 5px 10px;
-            font-size: 14px;
-        }
-        
-        /* Profile picture upload styles */
-        .profile-pic-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .profile-pic-large {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary-color);
-            margin-left: 20px;
-        }
-        
-        .profile-upload-btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .profile-upload-btn:hover {
-            background-color: #e05d00;
-        }
-        
-        #profile-pic-upload {
-            display: none;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
-    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
 </head>
 <body>
-    <!-- Audio Player (hidden) -->
-    <audio id="audio-player" controls>
-        <source src="https://j3rajerz.github.io/JR-ghaza/welcome.mp3" type="audio/mpeg">
-        مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-    </audio>
-
-    <div class="container">
-        <!-- Login Section -->
-        <div id="login-section" class="card section-transition">
-            <div class="header">
-                <img src="https://j3rajerz.github.io/JR-ghaza/GR-logo.png" alt="JR Logo" class="logo" id="login-logo">
-                <h1>سامانه ثبت غذای JR</h1>
-            </div>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="username">نام کاربری</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">رمز عبور</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn">ورود به سیستم</button>
-            </form>
-        </div>
-
-        <!-- Dashboard Section -->
-        <div id="dashboard-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> خروج
-                </button>
-                <div style="display: flex; align-items: center;">
-                    <img src="https://j3rajerz.github.io/JR-ghaza/GR-logo.png" alt="JR Logo" class="logo" style="max-width: 80px;">
-                    <h1 style="margin: 0 15px;">منوی اصلی</h1>
-                    <img id="user-profile-pic" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-                </div>
-            </div>
-            
-            <div class="dashboard">
-                <div class="card dashboard-item" onclick="showSection('register-food-section')">
-                    <i class="fas fa-edit"></i>
-                    <span>ثبت غذا</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('registered-foods-section')">
-                    <i class="fas fa-list"></i>
-                    <span>غذاهای ثبت شده</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('reports-section')">
-                    <i class="fas fa-file-alt"></i>
-                    <span>گزارش‌ها</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('settings-section')">
-                    <i class="fas fa-cog"></i>
-                    <span>تنظیمات</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('profile-section')">
-                    <i class="fas fa-user"></i>
-                    <span>پروفایل</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('change-password-section')">
-                    <i class="fas fa-key"></i>
-                    <span>تغییر رمز</span>
-                </div>
-                <div class="card dashboard-item" onclick="showSection('support-section')">
-                    <i class="fas fa-headset"></i>
-                    <span>پشتیبانی</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Register Food Section -->
-        <div id="register-food-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>ثبت درخواست غذا</h1>
-                <img id="user-profile-pic-2" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <form id="register-food-form" class="card">
-                <div class="form-group">
-                    <label for="fullname">نام و نام خانوادگی</label>
-                    <input type="text" id="fullname">
-                </div>
-                <div class="form-group">
-                    <label for="city">شهرستان</label>
-                    <select id="city">
-                        <option value="">-- انتخاب کنید --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="companion-count">تعداد همراه</label>
-                    <input type="number" id="companion-count" min="0" value="0" onchange="updateCompanionFields()">
-                </div>
-                <div class="companion-fields" id="companion-fields">
-                    <!-- Dynamic companion fields will be added here -->
-                </div>
-                <div class="form-group">
-                    <label>غذاها</label>
-                    <div id="food-items">
-                        <div class="food-item">
-                            <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-                            <select class="food-select">
-                                <option value="">-- انتخاب غذا --</option>
-                            </select>
-                            <input type="number" class="food-count" min="1" value="1">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary add-food" onclick="addFoodItem()">
-                        <i class="fas fa-plus"></i> افزودن غذای دیگر
-                    </button>
-                </div>
-                <div class="form-group">
-                    <label for="restaurant">رستوران</label>
-                    <select id="restaurant">
-                        <option value="">-- انتخاب کنید --</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn">ثبت درخواست</button>
-                <button type="button" class="btn btn-secondary" id="new-food-request-btn" style="margin-top: 10px;">
-                    <i class="fas fa-plus"></i> ثبت جدید
-                </button>
-            </form>
-        </div>
-
-        <!-- Registered Foods Section -->
-        <div id="registered-foods-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>غذاهای ثبت شده</h1>
-                <img id="user-profile-pic-8" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <div class="card">
-                <div id="registered-foods-list">
-                    <!-- Registered food items will be populated here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Section -->
-        <div id="reports-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>گزارش‌ها</h1>
-                <img id="user-profile-pic-3" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <div class="card">
-                <div class="form-group">
-                    <label for="report-start-date">از تاریخ</label>
-                    <div class="date-picker-container">
-                        <input type="text" id="report-start-date" class="persian-date-picker" placeholder="انتخاب تاریخ" readonly>
-                        <i class="fas fa-calendar-alt date-picker-icon" onclick="showDatePicker('report-start-date')"></i>
-                        <input type="date" id="report-start-date-gregorian" style="display: none;" onchange="convertGregorianToPersian('report-start-date', this.value)">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="report-end-date">تا تاریخ</label>
-                    <div class="date-picker-container">
-                        <input type="text" id="report-end-date" class="persian-date-picker" placeholder="انتخاب تاریخ" readonly>
-                        <i class="fas fa-calendar-alt date-picker-icon" onclick="showDatePicker('report-end-date')"></i>
-                        <input type="date" id="report-end-date-gregorian" style="display: none;" onchange="convertGregorianToPersian('report-end-date', this.value)">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="report-city">شهرستان</label>
-                    <select id="report-city">
-                        <option value="">همه شهرستان‌ها</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="report-food">غذا</label>
-                    <select id="report-food">
-                        <option value="">همه غذاها</option>
-                    </select>
-                </div>
-                <button class="btn" onclick="filterReports()">فیلتر</button>
-                <button class="btn btn-secondary" onclick="exportToExcel()" style="margin-top: 10px;">
-                    <i class="fas fa-file-excel"></i> خروجی Excel
-                </button>
-            </div>
-            <div class="card">
-                <table id="reports-table">
-                    <thead>
-                        <tr>
-                            <th>تاریخ</th>
-                            <th>نام</th>
-                            <th>شهرستان</th>
-                            <th>تعداد همراه</th>
-                            <th>غذاها</th>
-                            <th>رستوران</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Reports will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Settings Section -->
-        <div id="settings-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>تنظیمات سیستم</h1>
-                <img id="user-profile-pic-4" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            <div class="form-group">
-    <button type="button" class="btn btn-secondary" onclick="exportAllData()">دانلود پشتیبان اطلاعات</button>
-    <input type="file" id="import-data-file" style="display:none" accept=".json" onchange="importAllData(event)">
-    <button type="button" class="btn btn-secondary" onclick="document.getElementById('import-data-file').click()">بارگذاری اطلاعات از فایل</button>
-</div>
-            
-            <div class="card">
-                <h2>مدیریت غذاها</h2>
-                <div id="food-list">
-                    <!-- Food items will be populated here -->
-                </div>
-                <div class="form-group">
-                    <input type="text" id="new-food" placeholder="نام غذای جدید">
-                    <button type="button" class="btn btn-secondary" onclick="addFood()" style="margin-top: 10px;">
-                        <i class="fas fa-plus"></i> افزودن غذا
-                    </button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>مدیریت رستوران‌ها</h2>
-                <div id="restaurant-list">
-                    <!-- Restaurant items will be populated here -->
-                </div>
-                <div class="form-group">
-                    <input type="text" id="new-restaurant" placeholder="نام رستوران جدید">
-                    <button type="button" class="btn btn-secondary" onclick="addRestaurant()" style="margin-top: 10px;">
-                        <i class="fas fa-plus"></i> افزودن رستوران
-                    </button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>مدیریت شهرستان‌ها</h2>
-                <div id="city-list">
-                    <!-- City items will be populated here -->
-                </div>
-                <div class="form-group">
-                    <input type="text" id="new-city" placeholder="نام شهرستان جدید">
-                    <button type="button" class="btn btn-secondary" onclick="addCity()" style="margin-top: 10px;">
-                        <i class="fas fa-plus"></i> افزودن شهرستان
-                    </button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>تنظیمات مسئول</h2>
-                <div class="form-group">
-                    <label for="admin-name">نام مسئول امور اداری</label>
-                    <input type="text" id="admin-name">
-                </div>
-                <div class="form-group">
-                    <label for="signature-upload">تصویر امضا (PNG)</label>
-                    <input type="file" id="signature-upload" accept="image/png">
-                    <img id="signature-preview" class="signature-preview">
-                </div>
-                <button class="btn" onclick="saveAdminSettings()">ذخیره تنظیمات</button>
-            </div>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profile-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>پروفایل کاربری</h1>
-                <img id="user-profile-pic-5" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <div class="card">
-                <div class="profile-pic-container">
-                    <img id="profile-pic-large" src="profile-placeholder.png" class="profile-pic-large">
-                    <div>
-                        <label for="profile-pic-upload" class="profile-upload-btn">
-                            <i class="fas fa-camera"></i> تغییر عکس پروفایل
-                        </label>
-                        <input type="file" id="profile-pic-upload" accept="image/*">
-                        <p style="margin-top: 5px; font-size: 12px; color: #aaa;">حداکثر سایز: 2MB</p>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="profile-display-name">نام نمایشی</label>
-                    <input type="text" id="profile-display-name">
-                </div>
-                
-                <button class="btn" onclick="saveProfile()">ذخیره تغییرات</button>
-                
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>نام کاربری</label>
-                    <p id="profile-username"></p>
-                </div>
-                <div class="form-group">
-                    <label>تاریخ آخرین ورود</label>
-                    <p id="profile-last-login"></p>
-                </div>
-                <div class="form-group">
-                    <label>تعداد درخواست‌های ثبت شده</label>
-                    <p id="profile-request-count"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Change Password Section -->
-        <div id="change-password-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>تغییر رمز عبور</h1>
-                <img id="user-profile-pic-6" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <form id="change-password-form" class="card">
-                <div class="form-group">
-                    <label for="current-password">رمز عبور فعلی</label>
-                    <input type="password" id="current-password" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-password">رمز عبور جدید</label>
-                    <input type="password" id="new-password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">تکرار رمز عبور جدید</label>
-                    <input type="password" id="confirm-password" required>
-                </div>
-                <button type="submit" class="btn">تغییر رمز</button>
-            </form>
-        </div>
-
-        <!-- Support Section -->
-        <div id="support-section" class="hidden section-transition">
-            <div class="menu-header">
-                <button class="btn btn-secondary" onclick="showSection('dashboard-section')">
-                    <i class="fas fa-arrow-left"></i> بازگشت
-                </button>
-                <h1>ارتباط با پشتیبانی</h1>
-                <img id="user-profile-pic-7" src="profile-placeholder.png" alt="پروفایل کاربر" class="profile-pic">
-            </div>
-            
-            <div class="card">
-                <div class="support-info">
-                    <p><strong>پشتیبانی فنی:</strong> جعفر رحیمی</p>
-                    <p><strong>تلفن تماس:</strong> 09120370720</p>
-                    <p><strong>ایمیل:</strong> jafarrahimi25@yahoo.com</p>
-                    <p>در صورت بروز هرگونه مشکل در سیستم، لطفاً با شماره فوق تماس حاصل فرمایید.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PDF Print Section (hidden until needed) -->
-        <div id="pdf-print-section" class="hidden print-section">
-            <div class="header">
-                <h1>اداره کل منابع طبیعی و آبخیزداری استان ...</h1>
-            </div>
-            <p>به نام خدا</p>
-            <p>درخواست ثبت غذا برای:</p>
-            <p>نام و نام خانوادگی: <span id="pdf-fullname"></span></p>
-            <p>شهرستان: <span id="pdf-city"></span></p>
-            <p>تعداد همراه: <span id="pdf-companion-count"></span></p>
-            <p>غذاها:</p>
-            <ul id="pdf-foods">
-                <!-- Food items will be added here -->
-            </ul>
-            <p>رستوران انتخابی: <span id="pdf-restaurant"></span></p>
-            <p>تاریخ: <span id="pdf-date"></span></p>
-            <p>لطفاً همکاری لازم مبذول گردد.</p>
-            <div class="print-only">
-                <img id="pdf-signature" style="max-width: 200px; margin-top: 50px;">
-                <p><span id="pdf-admin-name"></span></p>
-                <p>مسئول امور اداری</p>
-            </div>
-        </div>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سامانه درخواست ماموریت JR</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
+    
+    :root {
+      --primary-color: #ffffff;
+      --secondary-color: #00bcd4;
+      --dark-color: #000000;
+      --light-color: #1a1a1a;
+      --success-color: #4caf50;
+      --danger-color: #f44336;
+      --warning-color: #ff9800;
+      --text-color: #ffffff;
+      --border-color: #333333;
+      --shadow-color: rgba(255, 255, 255, 0.3);
+      --input-bg: #ffffff;
+      --input-text: #000000;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--dark-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 100%;
+      width: 100%;
+      padding: 15px;
+      margin: 0 auto;
+    }
+    
+    .logo {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+    }
+    
+    .logo img {
+      max-width: 120px;
+      height: auto;
+    }
+    
+    .card {
+      background: var(--light-color);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      pointer-events: none;
+    }
+    
+    .card:hover {
+      box-shadow: 0 8px 25px var(--shadow-color);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 16px;
+      margin: 5px;
+      width: calc(100% - 10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+    
+    .btn:hover::before {
+      opacity: 1;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #008ba3 100%);
+      color: white;
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+    
+    .btn-primary:hover {
+      box-shadow: 0 8px 20px var(--shadow-color);
+    }
+    
+    .btn-secondary {
+      background: var(--light-color);
+      color: var(--text-color);
+      border: 1px solid var(--secondary-color);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger-color) 0%, #d32f2f 100%);
+      color: white;
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #388e3c 100%);
+      color: white;
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #f57c00 100%);
+      color: white;
+    }
+    
+    .btn-logout {
+      background: linear-gradient(135deg, #9e9e9e 0%, #616161 100%);
+      color: white;
+      margin-top: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: var(--input-bg);
+      color: var(--input-text);
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    
+    .radio-option input {
+      accent-color: var(--secondary-color);
+    }
+    
+    .time-picker-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+    }
+    
+    .time-picker-container::before {
+      content: ":";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--secondary-color);
+      z-index: 1;
+    }
+    
+    select.time-picker {
+      flex: 1;
+      appearance: none;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--input-text);
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 15px;
+    }
+    
+    .date-container {
+      position: relative;
+    }
+    
+    .date-container input {
+      width: 100%;
+      padding-left: 45px;
+      background-color: var(--input-bg);
+      cursor: pointer;
+      color: var(--input-text);
+    }
+    
+    .date-container i {
+      position: absolute;
+      top: 12px;
+      left: 15px;
+      color: var(--secondary-color);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .request-item {
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      background-color: var(--dark-color);
+      border-left: 4px solid var(--border-color);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+    
+    .request-item:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .request-item.approved {
+      border-left-color: var(--success-color);
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+    
+    .request-item.rejected {
+      border-left-color: var(--danger-color);
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+    
+    .request-item.pending {
+      border-left-color: var(--warning-color);
+      background-color: rgba(255, 152, 0, 0.1);
+    }
+    
+    .request-item.transport-pending {
+      border-left-color: #2196F3;
+      background-color: rgba(33, 150, 243, 0.1);
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .profile-pic {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--secondary-color);
+      box-shadow: 0 0 15px var(--shadow-color);
+    }
+    
+    /* استایل تقویم */
+    .datepicker-plot-area {
+      font-size: 14px !important;
+      padding: 15px !important;
+      border-radius: 15px !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+      border: none !important;
+      background-color: var(--light-color) !important;
+      color: var(--text-color) !important;
+    }
+    
+    .datepicker-plot-area .datepicker-navbar {
+      background-color: transparent !important;
+      border-bottom: 1px solid var(--border-color) !important;
+    }
+    
+    .datepicker-plot-area .datepicker-navbar-btn {
+      color: var(--secondary-color) !important;
+    }
+    
+    .datepicker-plot-area .datepicker-day-view .datepicker-cell {
+      color: var(--text-color) !important;
+      border-radius: 8px !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    .datepicker-plot-area .datepicker-day-view .datepicker-cell:hover {
+      background-color: rgba(0, 188, 212, 0.2) !important;
+    }
+    
+    .datepicker-plot-area .datepicker-day-view .datepicker-cell.selected {
+      background: var(--secondary-color) !important;
+      color: white !important;
+      box-shadow: 0 0 10px var(--shadow-color) !important;
+    }
+    
+    .datepicker-plot-area .today-btn {
+      background: var(--secondary-color) !important;
+      color: white !important;
+      border: none !important;
+      font-size: 16px !important;
+      padding: 12px !important;
+      margin-top: 15px !important;
+      box-shadow: 0 0 10px var(--shadow-color) !important;
+    }
+    
+    /* صفحه ورود */
+    .login-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    /* منوها */
+    .admin-menu, .employee-menu, .transport-menu {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+      font-size: 18px;
+    }
+    
+    .menu-btn i {
+      font-size: 24px;
+    }
+    
+    /* انیمیشن‌ها */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    /* افکت سه بعدی برای آیکون‌ها */
+    .icon-3d {
+      text-shadow: 0 0 10px var(--shadow-color), 
+                   0 0 20px var(--shadow-color),
+                   0 0 30px var(--shadow-color);
+    }
+    
+    /* استایل برای نمایش نام روز */
+    .day-name {
+      display: block;
+      font-size: 12px;
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* استایل برای دکمه‌های عملیات */
+    .action-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    /* استایل برای بخش‌های مختلف */
+    .section-title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--secondary-color);
+      position: relative;
+      padding-bottom: 10px;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+    }
+    
+    /* استایل برای اسپینر */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 188, 212, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--secondary-color);
+      animation: spin 1s ease-in-out infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* استایل برای توضیحات کوچک */
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #aaa;
+      font-size: 12px;
+    }
+    
+    /* بهبود نمایش روی موبایل */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .profile-pic {
+        margin-bottom: 10px;
+      }
+    }
+    
+    /* استایل برای انتخاب نوع درخواست */
+    .request-type-selector {
+      margin-bottom: 20px;
+    }
+    
+    .request-type-selector select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      background-color: var(--input-bg);
+      color: var(--input-text);
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- لوگو -->
+    <div class="logo">
+      <img src="https://i.ibb.co/0jQ4ZQx/GR-logo.png" alt="GR Logo" id="logoImage">
     </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
-
-    <script>
-        // Initialize localStorage if empty
-        function initializeStorage() {
-            if (!localStorage.getItem('users')) {
-                localStorage.setItem('users', JSON.stringify([
-                    { username: 'abbas', password: '1335', displayName: 'عباس', profilePic: '' }
-                ]));
-            }
-            
-            if (!localStorage.getItem('foods')) {
-                localStorage.setItem('foods', JSON.stringify([
-                    'چلو خورشت قیمه',
-                    'چلو خورشت قورمه سبزی',
-                    'چلو مرغ',
-                    'کباب کوبیده',
-                    'کباب برگ'
-                ]));
-            }
-            
-            if (!localStorage.getItem('restaurants')) {
-                localStorage.setItem('restaurants', JSON.stringify([
-                    'رستوران گلستان',
-                    'رستوران بهشت',
-                    'رستوران آفتاب',
-                    'رستوران زاگرس'
-                ]));
-            }
-            
-            if (!localStorage.getItem('cities')) {
-                localStorage.setItem('cities', JSON.stringify([
-                    'شیراز',
-                    'تهران',
-                    'اصفهان',
-                    'مشهد',
-                    'تبریز'
-                ]));
-            }
-            
-            if (!localStorage.getItem('foodRequests')) {
-                localStorage.setItem('foodRequests', JSON.stringify([]));
-            }
-            
-            if (!localStorage.getItem('adminSettings')) {
-                localStorage.setItem('adminSettings', JSON.stringify({
-                    adminName: 'مسئول امور اداری',
-                    signature: ''
-                }));
-            }
-            
-            if (!localStorage.getItem('userActivity')) {
-                localStorage.setItem('userActivity', JSON.stringify({}));
-            }
-        }
+    
+    <!-- صفحه ورود -->
+    <div id="loginPage" class="card fade-in">
+      <h2 style="text-align: center; color: var(--secondary-color);">سامانه  درخواست ماموریت JR</h2>
+      <div class="login-options">
+        <button class="btn btn-primary" onclick="showLoginForm('admin')">
+          <i class="fas fa-user-shield icon-3d"></i> ورود مدیر (رمز: 1335)
+        </button>
+        <button class="btn btn-primary" onclick="showLoginForm('employee')">
+          <i class="fas fa-user-tie icon-3d"></i> ورود کارمند
+        </button>
+        <button class="btn btn-primary" onclick="showLoginForm('transport')">
+          <i class="fas fa-car icon-3d"></i> ورود مسئول نقلیه
+        </button>
+        <button class="btn btn-warning" onclick="showHelp()">
+          <i class="fas fa-question-circle"></i> راهنمای سیستم
+        </button>
+      </div>
+    </div>
+    
+    <!-- فرم ورود -->
+    <div id="loginForm" class="card hidden">
+      <h3 id="loginFormTitle" class="section-title"></h3>
+      <div class="form-group">
+        <label for="username">نام کاربری:</label>
+        <input type="text" id="username" placeholder="نام کاربری را وارد کنید">
+      </div>
+      <div class="form-group">
+        <label for="password">رمز عبور:</label>
+        <input type="password" id="password" placeholder="رمز عبور را وارد کنید">
+      </div>
+      <button class="btn btn-primary" onclick="login()">
+        <i class="fas fa-sign-in-alt"></i> ورود
+      </button>
+      <button class="btn btn-secondary" onclick="backToLoginPage()">
+        <i class="fas fa-arrow-right"></i> بازگشت
+      </button>
+    </div>
+    
+    <!-- پنل مدیر -->
+    <div id="adminPanel" class="hidden">
+      <div class="card">
+        <div class="profile-header">
+          <img src="https://via.placeholder.com/60x60?text=Admin" alt="Admin" class="profile-pic" id="adminProfilePic">
+          <div>
+            <h3 id="adminName" style="color: var(--secondary-color);">پنل مدیر</h3>
+            <p>سطح دسترسی: مدیر کل</p>
+          </div>
+        </div>
         
-        // Show toast notification
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = isError ? 'toast error' : 'toast';
-            toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
+        <div class="admin-menu">
+          <button class="btn btn-primary menu-btn" onclick="showSection('registerEmployee')">
+            <i class="fas fa-user-plus icon-3d"></i> ثبت کارمند
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('viewEmployees')">
+            <i class="fas fa-users icon-3d"></i> مشاهده کارمندان
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('viewRequests')">
+            <i class="fas fa-list icon-3d"></i> مشاهده درخواست‌ها
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('changeAdminPassword')">
+            <i class="fas fa-key icon-3d"></i> تغییر رمز
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('updateAdminProfile')">
+            <i class="fas fa-user-edit icon-3d"></i> ویرایش پروفایل
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('exportData')">
+            <i class="fas fa-file-export icon-3d"></i> خروجی اطلاعات
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('registerTransport')">
+            <i class="fas fa-car-side icon-3d"></i> ثبت مسئول نقلیه
+          </button>
+          <button class="btn btn-danger menu-btn" onclick="resetSystem()">
+            <i class="fas fa-trash icon-3d"></i> ریست سیستم
+          </button>
+          <button class="btn btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> خروج از سیستم
+          </button>
+        </div>
+      </div>
+      
+      <!-- بخش‌های مختلف پنل مدیر -->
+      <div id="registerEmployee" class="card hidden">
+        <h3 class="section-title">ثبت کارمند جدید</h3>
+        <div class="form-group">
+          <label for="employeeLastName">نام خانوادگی:</label>
+          <input type="text" id="employeeLastName" placeholder="فقط نام خانوادگی را وارد کنید">
+          <small>نام کوچک نیاز نیست</small>
+        </div>
+        <div class="form-group">
+          <label for="employeePassword">رمز عبور:</label>
+          <input type="password" id="employeePassword" placeholder="رمز عبور را وارد کنید">
+        </div>
+        <div class="form-group">
+          <label for="employeePhoto">عکس پروفایل:</label>
+          <input type="file" id="employeePhoto" accept="image/*">
+        </div>
+        <button class="btn btn-success" onclick="registerEmployee()">
+          <i class="fas fa-save"></i> ثبت کارمند
+        </button>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="viewEmployees" class="card hidden">
+        <h3 class="section-title">لیست کارمندان</h3>
+        <div id="employeesList"></div>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="viewRequests" class="card hidden">
+        <h3 class="section-title">درخواست‌های مأموریت</h3>
+        <div id="requestsListAdmin"></div>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="changeAdminPassword" class="card hidden">
+        <h3 class="section-title">تغییر رمز عبور مدیر</h3>
+        <div class="form-group">
+          <label for="currentAdminPassword">رمز فعلی:</label>
+          <input type="password" id="currentAdminPassword" placeholder="رمز عبور فعلی را وارد کنید">
+        </div>
+        <div class="form-group">
+          <label for="newAdminPassword">رمز جدید:</label>
+          <input type="password" id="newAdminPassword" placeholder="رمز عبور جدید را وارد کنید">
+        </div>
+        <div class="form-group">
+          <label for="confirmAdminPassword">تکرار رمز جدید:</label>
+          <input type="password" id="confirmAdminPassword" placeholder="رمز عبور جدید را تکرار کنید">
+        </div>
+        <button class="btn btn-success" onclick="changeAdminPassword()">
+          <i class="fas fa-save"></i> تغییر رمز
+        </button>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="updateAdminProfile" class="card hidden">
+        <h3 class="section-title">ویرایش پروفایل مدیر</h3>
+        <div class="form-group">
+          <label for="adminFullName">نام کامل:</label>
+          <input type="text" id="adminFullName" placeholder="نام کامل را وارد کنید">
+        </div>
+        <div class="form-group">
+          <label for="adminProfileImage">عکس پروفایل:</label>
+          <input type="file" id="adminProfileImage" accept="image/*">
+        </div>
+        <button class="btn btn-success" onclick="updateAdminProfile()">
+          <i class="fas fa-save"></i> ذخیره تغییرات
+        </button>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="exportData" class="card hidden">
+        <h3 class="section-title">گرفتن خروجی اطلاعات</h3>
+        <div class="form-group">
+          <label for="exportStartDate">تاریخ شروع:</label>
+          <div class="date-container">
+            <input type="text" id="exportStartDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#exportStartDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="exportEndDate">تاریخ پایان:</label>
+          <div class="date-container">
+            <input type="text" id="exportEndDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#exportEndDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="exportToPDF()">
+          <i class="fas fa-file-pdf"></i> خروجی PDF
+        </button>
+        <button class="btn btn-success" onclick="exportToExcel()">
+          <i class="fas fa-file-excel"></i> خروجی Excel
+        </button>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="registerTransport" class="card hidden">
+        <h3 class="section-title">ثبت مسئول نقلیه</h3>
+        <div class="form-group">
+          <label for="transportUsername">نام کاربری:</label>
+          <input type="text" id="transportUsername" placeholder="نام کاربری را وارد کنید">
+        </div>
+        <div class="form-group">
+          <label for="transportPassword">رمز عبور:</label>
+          <input type="password" id="transportPassword" placeholder="رمز عبور را وارد کنید">
+        </div>
+        <button class="btn btn-success" onclick="registerTransportManager()">
+          <i class="fas fa-save"></i> ثبت مسئول
+        </button>
+        <button class="btn btn-secondary" onclick="backToAdminMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+    </div>
+    
+    <!-- پنل کارمند -->
+    <div id="employeePanel" class="hidden">
+      <div class="card">
+        <div class="profile-header">
+          <img src="https://via.placeholder.com/60x60?text=Employee" alt="Employee" class="profile-pic" id="employeeProfilePic">
+          <div>
+            <h3 id="employeeName" style="color: var(--secondary-color);">پنل کارمند</h3>
+            <p>سطح دسترسی: کارمند</p>
+          </div>
+        </div>
         
-        // Show/hide sections with improved menu handling
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('div[id$="-section"]').forEach(el => {
-                el.classList.add('hidden');
-            });
-            
-            // Show the requested section
-            const section = document.getElementById(sectionId);
-            section.classList.remove('hidden');
-            section.classList.add('section-transition');
-            
-            // Play welcome sound when login section is shown
-             if (sectionId === 'login-section') {
-        const audioPlayer = document.getElementById('audio-player');
-        audioPlayer.muted = true; // شروع با حالت بی‌صدا
-        audioPlayer.play()
-            .then(() => {
-                audioPlayer.muted = false;
-            })
-            .catch(e => {
-                console.log('Auto-play prevented:', e);
-                // نمایش دکمه پخش برای کاربر
-                const playButton = document.createElement('button');
-                playButton.className = 'btn';
-                playButton.innerHTML = '<i class="fas fa-volume-up"></i> پخش صوت خوشامدگویی';
-                playButton.onclick = () => {
-                    audioPlayer.play();
-                    playButton.remove();
-                };
-                document.getElementById('login-section').appendChild(playButton);
-            });
+        <div class="employee-menu">
+          <button class="btn btn-primary menu-btn" onclick="showSection('requestType')">
+            <i class="fas fa-paper-plane icon-3d"></i> ثبت درخواست
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('employeeRequests')">
+            <i class="fas fa-list icon-3d"></i> مشاهده درخواست‌ها
+          </button>
+          <button class="btn btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> خروج از سیستم
+          </button>
+        </div>
+      </div>
+      
+      <!-- بخش انتخاب نوع درخواست -->
+      <div id="requestType" class="card hidden">
+        <h3 class="section-title">ثبت درخواست</h3>
+        <div class="form-group request-type-selector">
+          <label for="requestTypeSelect">نوع درخواست:</label>
+          <select id="requestTypeSelect" onchange="showRequestForm()">
+            <option value="">-- انتخاب کنید --</option>
+            <option value="mission">مأموریت</option>
+            <option value="leave">مرخصی</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onclick="backToEmployeeMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <!-- فرم درخواست مأموریت -->
+      <div id="missionRequest" class="card hidden">
+        <h3 class="section-title">ثبت درخواست مأموریت</h3>
+        <div class="form-group">
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="missionType" value="driver" checked onchange="toggleCarField()">
+              <i class="fas fa-car"></i> راننده
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="missionType" value="companion" onchange="toggleCarField()">
+              <i class="fas fa-user-friends"></i> همراه
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="carField">
+          <label for="carType">نوع خودرو:</label>
+          <select id="carType">
+            <option value="">انتخاب کنید</option>
+            <option value="personal">🚗 خودرو شخصی</option>
+            <option value="foton">🚚 فوتون</option>
+            <option value="samand_service">🚙 سمند خدماتی</option>
+            <option value="rich">🚘 ریچ</option>
+            <option value="samand_riz">🚙 سمند ریز</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="missionLocation">محل مأموریت:</label>
+          <input type="text" id="missionLocation" placeholder="محل مأموریت را وارد کنید">
+        </div>
+
+        <div class="form-group">
+          <label for="missionDate">تاریخ:</label>
+          <div class="date-container">
+            <input type="text" id="missionDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#missionDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>زمان رفت:</label>
+          <div class="time-picker-container">
+            <select class="time-picker" id="departureHour">
+              <option value="">ساعت</option>
+              <script>
+                for (let i = 0; i < 24; i++) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+            <select class="time-picker" id="departureMinute">
+              <option value="">دقیقه</option>
+              <script>
+                for (let i = 0; i < 60; i += 5) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>زمان برگشت:</label>
+          <div class="time-picker-container">
+            <select class="time-picker" id="returnHour">
+              <option value="">ساعت</option>
+              <script>
+                for (let i = 0; i < 24; i++) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+            <select class="time-picker" id="returnMinute">
+              <option value="">دقیقه</option>
+              <script>
+                for (let i = 0; i < 60; i += 5) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-success" onclick="submitMissionRequest()">
+          <i class="fas fa-paper-plane"></i> ثبت درخواست
+        </button>
+        <button class="btn btn-secondary" onclick="backToRequestType()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <!-- فرم درخواست مرخصی -->
+      <div id="leaveRequest" class="card hidden">
+        <h3 class="section-title">ثبت درخواست مرخصی</h3>
+        
+        <div class="form-group">
+          <label for="leaveDate">تاریخ:</label>
+          <div class="date-container">
+            <input type="text" id="leaveDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#leaveDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>زمان شروع:</label>
+          <div class="time-picker-container">
+            <select class="time-picker" id="leaveStartHour">
+              <option value="">ساعت</option>
+              <script>
+                for (let i = 0; i < 24; i++) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+            <select class="time-picker" id="leaveStartMinute">
+              <option value="">دقیقه</option>
+              <script>
+                for (let i = 0; i < 60; i += 5) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>زمان پایان:</label>
+          <div class="time-picker-container">
+            <select class="time-picker" id="leaveEndHour">
+              <option value="">ساعت</option>
+              <script>
+                for (let i = 0; i < 24; i++) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+            <select class="time-picker" id="leaveEndMinute">
+              <option value="">دقیقه</option>
+              <script>
+                for (let i = 0; i < 60; i += 5) {
+                  document.write(`<option value="${i}">${i.toString().padStart(2, '0')}</option>`);
+                }
+              </script>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-success" onclick="submitLeaveRequest()">
+          <i class="fas fa-paper-plane"></i> ثبت درخواست
+        </button>
+        <button class="btn btn-secondary" onclick="backToRequestType()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="employeeRequests" class="card hidden">
+        <h3 class="section-title">درخواست‌های من</h3>
+        <div id="employeeRequestsList"></div>
+        <button class="btn btn-secondary" onclick="backToEmployeeMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+    </div>
+    
+    <!-- پنل مسئول نقلیه -->
+    <div id="transportPanel" class="hidden">
+      <div class="card">
+        <div class="profile-header">
+          <img src="https://via.placeholder.com/60x60?text=Transport" alt="Transport" class="profile-pic" id="transportProfilePic">
+          <div>
+            <h3 style="color: var(--secondary-color);">پنل مسئول نقلیه</h3>
+            <p>سطح دسترسی: مسئول نقلیه</p>
+          </div>
+        </div>
+        
+        <div class="transport-menu">
+          <button class="btn btn-primary menu-btn" onclick="showSection('approvedRequests')">
+            <i class="fas fa-check-circle icon-3d"></i> درخواست‌های تایید شده
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('transportPendingRequests')">
+            <i class="fas fa-clock icon-3d"></i> درخواست‌های در انتظار تایید
+          </button>
+          <button class="btn btn-primary menu-btn" onclick="showSection('searchRequests')">
+            <i class="fas fa-search icon-3d"></i> جستجو در درخواست‌ها
+          </button>
+          <button class="btn btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> خروج از سیستم
+          </button>
+        </div>
+      </div>
+      
+      <!-- بخش‌های مختلف پنل مسئول نقلیه -->
+      <div id="approvedRequests" class="card hidden">
+        <h3 class="section-title">درخواست‌های تایید شده</h3>
+        <div id="transportRequestsList"></div>
+        <button class="btn btn-secondary" onclick="backToTransportMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="transportPendingRequests" class="card hidden">
+        <h3 class="section-title">درخواست‌های در انتظار تایید</h3>
+        <div id="transportPendingList"></div>
+        <button class="btn btn-secondary" onclick="backToTransportMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+      
+      <div id="searchRequests" class="card hidden">
+        <h3 class="section-title">جستجو در درخواست‌ها</h3>
+        <div class="form-group">
+          <label for="searchCarType">نوع خودرو:</label>
+          <select id="searchCarType">
+            <option value="">همه</option>
+            <option value="personal">🚗 خودرو شخصی</option>
+            <option value="foton">🚚 فوتون</option>
+            <option value="samand_service">🚙 سمند خدماتی</option>
+            <option value="rich">🚘 ریچ</option>
+            <option value="samand_riz">🚙 سمند ریز</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="searchStartDate">تاریخ شروع:</label>
+          <div class="date-container">
+            <input type="text" id="searchStartDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#searchStartDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="searchEndDate">تاریخ پایان:</label>
+          <div class="date-container">
+            <input type="text" id="searchEndDate" readonly placeholder="انتخاب تاریخ">
+            <i class="fa fa-calendar-alt" onclick="$('#searchEndDate').pDatepicker('show');"></i>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="searchRequests()">
+          <i class="fas fa-search"></i> جستجو
+        </button>
+        <button class="btn btn-success" onclick="exportSearchToPDF()">
+          <i class="fas fa-file-pdf"></i> خروجی PDF
+        </button>
+        <button class="btn btn-success" onclick="exportSearchToExcel()">
+          <i class="fas fa-file-excel"></i> خروجی Excel
+        </button>
+        <div id="searchResults" style="margin-top: 20px;"></div>
+        <button class="btn btn-secondary" onclick="backToTransportMenu()">
+          <i class="fas fa-arrow-right"></i> بازگشت
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- اسکریپت‌ها -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-date/dist/persian-date.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
+  <script>
+    // متغیرهای سیستمی
+    let currentUser = null;
+    let currentRole = null;
+    let employees = JSON.parse(localStorage.getItem('employees')) || [];
+    let transportManager = JSON.parse(localStorage.getItem('transportManager')) || null;
+    let missionRequests = JSON.parse(localStorage.getItem('missionRequests')) || [];
+    let leaveRequests = JSON.parse(localStorage.getItem('leaveRequests')) || [];
+    let adminPassword = localStorage.getItem('adminPassword') || '1335';
+    let adminProfile = JSON.parse(localStorage.getItem('adminProfile')) || { name: 'عباس', photo: 'https://via.placeholder.com/60x60?text=Admin' };
+    let editingEmployeeId = null;
+    
+    // پخش صوت
+    function playSound(soundName) {
+      const sounds = {
+        M1: 'https://raw.githubusercontent.com/yourusername/GR-Attendance-System/main/sounds/M1.mp3',
+        M2: 'https://raw.githubusercontent.com/yourusername/GR-Attendance-System/main/sounds/M2.mp3',
+        M3: 'https://raw.githubusercontent.com/yourusername/GR-Attendance-System/main/sounds/M3.mp3',
+        M4: 'https://raw.githubusercontent.com/yourusername/GR-Attendance-System/main/sounds/M4.mp3',
+        M5: 'https://raw.githubusercontent.com/yourusername/GR-Attendance-System/main/sounds/M5.mp3'
+      };
+      
+      if (sounds[soundName]) {
+        const audio = new Audio(sounds[soundName]);
+        audio.play().catch(e => console.log('خطا در پخش صوت:', e));
+      }
     }
-}
-        
-        // Load registered foods for the current user
-        function loadRegisteredFoods() {
-    const requests = JSON.parse(localStorage.getItem('foodRequests'));
-    const currentUser = localStorage.getItem('activeUser');
-    const container = document.getElementById('registered-foods-list');
-
-    // فیلتر درخواست‌های کاربر جاری و مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
-    const userRequests = requests
-        .filter(r => r.username === currentUser)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    container.innerHTML = '';
-
-    if (userRequests.length === 0) {
-        container.innerHTML = '<p>هیچ درخواست غذایی ثبت نشده است</p>';
-        return;
+    
+    // نمایش راهنما
+    function showHelp() {
+      Swal.fire({
+        title: 'راهنمای سیستم',
+        html: `
+          <div style="text-align: right; direction: rtl;">
+            <h4>دستورالعمل استفاده:</h4>
+            <p>1. مدیر سیستم با نام کاربری "عباس" و رمز پیش‌فرض "1335" وارد شود</p>
+            <p>2. برای ثبت کارمندان جدید از بخش "ثبت کارمند" استفاده کنید</p>
+            <p>3. کارمندان می‌توانند درخواست مأموریت یا مرخصی ثبت کنند</p>
+            <p>4. مدیر می‌تواند درخواست‌ها را تأیید یا رد کند</p>
+            <p>5. مسئول نقلیه می‌تواند درخواست‌های تأیید شده را مشاهده و برای درخواست‌های رانندگان تأیید نهایی انجام دهد</p>
+            <p>6. درخواست‌های همراهان و مرخصی فقط توسط مدیر تأیید می‌شوند</p>
+          </div>
+        `,
+        icon: 'info',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
     }
-
-    userRequests.forEach(request => {
-        const div = document.createElement('div');
-        div.className = 'registered-food-item';
-
-        // فرمت تاریخ
-        const date = new Date(request.date);
-        let persianDate;
-        if (typeof PersianDate !== 'undefined') {
-            persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
-        } else {
-            persianDate = date.toLocaleString('fa-IR');
-        }
-
-        // فرمت غذاها
-        const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
-
-        div.innerHTML = `
-            <h3>${request.fullname} - ${request.city}</h3>
-            <p><strong>تاریخ ثبت:</strong> ${persianDate}</p>
-            <p><strong>رستوران:</strong> ${request.restaurant}</p>
-            <p><strong>غذاها:</strong> ${foodItems}</p>
-            <p><strong>تعداد همراه:</strong> ${request.companionCount}</p>
-            ${request.companionNames.length > 0 ? 
-              `<p><strong>نام همراهان:</strong> ${request.companionNames.join('، ')}</p>` : ''}
-            <div class="registered-food-actions">
-                <button class="btn" onclick="editFoodRequest('${request.id}')">
-                    <i class="fas fa-edit"></i> ویرایش
-                </button>
-                <button class="btn btn-secondary" onclick="deleteFoodRequest('${request.id}')">
-                    <i class="fas fa-trash"></i> حذف
-                </button>
-                <button class="btn" onclick="printFoodRequest('${request.id}')">
-                    <i class="fas fa-print"></i> چاپ
-                </button>
-            </div>
-        `;
-
-        container.appendChild(div);
-    });
-}
-        
-        // Edit food request
-        function editFoodRequest(requestId) {
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            const request = requests.find(r => r.id.toString() === requestId.toString());
-            
-            if (!request) {
-                showToast('درخواست مورد نظر یافت نشد', true);
-                return;
-            }
-            
-            // Populate the form
-            document.getElementById('fullname').value = request.fullname;
-            document.getElementById('city').value = request.city;
-            document.getElementById('companion-count').value = request.companionCount;
-            document.getElementById('restaurant').value = request.restaurant;
-            
-            // Add companion fields
-            const companionContainer = document.getElementById('companion-fields');
-            companionContainer.innerHTML = '';
-            
-            request.companionNames.forEach(name => {
-                const field = document.createElement('div');
-                field.className = 'companion-field';
-                field.innerHTML = `
-                    <div class="form-group">
-                        <label>نام همراه</label>
-                        <div style="display: flex;">
-                            <input type="text" class="companion-name" value="${name}">
-                            <button type="button" class="btn remove-companion" onclick="removeCompanionField(this)">حذف</button>
-                        </div>
-                    </div>
-                `;
-                companionContainer.appendChild(field);
-            });
-            
-            // Add food items
-            const foodItemsContainer = document.getElementById('food-items');
-            foodItemsContainer.innerHTML = '';
-            
-            request.foodItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'food-item';
-                div.innerHTML = `
-                    <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-                    <select class="food-select">
-                        <option value="">-- انتخاب غذا --</option>
-                    </select>
-                    <input type="number" class="food-count" min="1" value="${item.count}">
-                `;
-                
-                foodItemsContainer.appendChild(div);
-                
-                // Load foods for this select
-                const foods = JSON.parse(localStorage.getItem('foods'));
-                const select = div.querySelector('.food-select');
-                
-                foods.forEach(food => {
-                    const option = document.createElement('option');
-                    option.value = food;
-                    option.textContent = food;
-                    if (food === item.food) {
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
-            });
-            
-            // Store the request ID in the form for update
-            document.getElementById('register-food-form').dataset.editingId = requestId;
-            
-            showSection('register-food-section');
-            showToast('درخواست برای ویرایش بارگذاری شد');
-        }
-        
-        // Delete food request
-        function deleteFoodRequest(requestId) {
-            if (!confirm('آیا از حذف این درخواست مطمئن هستید؟')) {
-                return;
-            }
-            
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            const updatedRequests = requests.filter(r => r.id.toString() !== requestId.toString());
-            
-            localStorage.setItem('foodRequests', JSON.stringify(updatedRequests));
-            loadRegisteredFoods();
-            showToast('درخواست با موفقیت حذف شد');
-        }
-        
-        // Save profile changes
-        function saveProfile() {
-    const displayName = document.getElementById('profile-display-name').value;
-    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
-    const users = JSON.parse(localStorage.getItem('users'));
-    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
-
-    if (displayName) {
-        currentUser.displayName = displayName;
-        // ذخیره تغییرات در آرایه users
-        const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
-        localStorage.setItem('users', JSON.stringify(updatedUsers));
-        showToast('تغییرات با موفقیت ذخیره شد');
+    
+    // نمایش فرم ورود
+    function showLoginForm(role) {
+      currentRole = role;
+      $('#loginPage').addClass('hidden');
+      
+      let title = '';
+      switch(role) {
+        case 'admin':
+          title = '👑 ورود مدیر';
+          break;
+        case 'employee':
+          title = '👤 ورود کارمند';
+          break;
+        case 'transport':
+          title = '🚗 ورود مسئول نقلیه';
+          break;
+      }
+      
+      $('#loginFormTitle').text(title);
+      $('#loginForm').removeClass('hidden').addClass('fade-in');
+      
+      if (role === 'admin') {
+        $('#username').val('عباس');
+      } else {
+        $('#username').val('');
+      }
+      $('#password').val('');
     }
-}
-        
-        // Initialize profile picture upload
-        document.getElementById('profile-pic-upload').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Check file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        showToast('حجم فایل باید کمتر از 2MB باشد', true);
-        return;
+    
+    // بازگشت به صفحه ورود
+    function backToLoginPage() {
+      $('#loginForm').addClass('hidden');
+      $('#loginPage').removeClass('hidden').addClass('fade-in');
+      currentRole = null;
     }
-
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        // Update all profile pictures
-        document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-            img.src = event.target.result;
+    
+    // ورود به سیستم
+    function login() {
+      const username = $('#username').val().trim();
+      const password = $('#password').val().trim();
+      
+      if (!username || !password) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً نام کاربری و رمز عبور را وارد کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
         });
-        document.getElementById('profile-pic-large').src = event.target.result;
-
-        // Save to user data
-        const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
-        const users = JSON.parse(localStorage.getItem('users'));
-        const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
-        currentUser.profilePic = event.target.result;
-        // ذخیره تغییرات در آرایه users
-        const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
-        localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-        showToast('عکس پروفایل با موفقیت تغییر کرد');
-    };
-    reader.readAsDataURL(file);
-});
-        
-        // Show Persian date picker when icon is clicked
-        function showDatePicker(inputId) {
-            // Remove any existing simple date picker
-            const existingPicker = document.querySelector('.simple-date-picker');
-            if (existingPicker) {
-                existingPicker.remove();
-            }
-            
-            const $input = $('#' + inputId);
-            
-            // Check if jQuery and persian-datepicker are loaded
-            if (typeof $ === 'undefined' || typeof $.fn.pDatepicker === 'undefined') {
-                // Fallback to simple date picker
-                const picker = createSimpleDatePicker(inputId);
-                picker.style.display = 'block';
-                
-                // Close picker when clicking outside
-                document.addEventListener('click', function closePicker(e) {
-                    if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
-                        picker.style.display = 'none';
-                        document.removeEventListener('click', closePicker);
-                    }
-                });
-                return;
-            }
-            
-            // Check if pDatepicker is initialized
-            if (!$input.data('pDatepicker')) {
-                try {
-                    // Initialize if not already done
-                    $input.pDatepicker({
-                        format: 'YYYY/MM/DD',
-                        autoClose: true,
-                        initialValue: false,
-                        calendar: {
-                            persian: {
-                                locale: 'fa'
-                            }
-                        },
-                        toolbox: {
-                            calendarSwitch: {
-                                enabled: false
-                            }
-                        },
-                        observer: true
-                    });
-                } catch (error) {
-                    console.error('Error initializing date picker:', error);
-                    // Fallback to simple date picker
-                    const picker = createSimpleDatePicker(inputId);
-                    picker.style.display = 'block';
-                    
-                    // Close picker when clicking outside
-                    document.addEventListener('click', function closePicker(e) {
-                        if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
-                            picker.style.display = 'none';
-                            document.removeEventListener('click', closePicker);
-                        }
-                    });
-                    return;
-                }
-            }
-            
-            // Show the date picker
-            try {
-                $input.pDatepicker('show');
-            } catch (error) {
-                console.error('Error showing date picker:', error);
-                // Fallback to simple date picker
-                const picker = createSimpleDatePicker(inputId);
-                picker.style.display = 'block';
-                
-                // Close picker when clicking outside
-                document.addEventListener('click', function closePicker(e) {
-                    if (!picker.contains(e.target) && e.target.id !== inputId && !e.target.classList.contains('date-picker-icon')) {
-                        picker.style.display = 'none';
-                        document.removeEventListener('click', closePicker);
-                    }
-                });
-            }
-        }
-        
-        // Convert Gregorian date to Persian date
-        function convertGregorianToPersian(persianInputId, gregorianDate) {
-            if (!gregorianDate) return;
-            
-            try {
-                const date = new Date(gregorianDate);
-                if (typeof PersianDate !== 'undefined') {
-                    const persianDate = new PersianDate(date);
-                    const persianDateString = persianDate.format('YYYY/MM/DD');
-                    document.getElementById(persianInputId).value = persianDateString;
-                } else {
-                    // Simple fallback conversion
-                    const year = date.getFullYear();
-                    const month = date.getMonth() + 1;
-                    const day = date.getDate();
-                    
-                    // Simple Persian year calculation (approximate)
-                    const persianYear = year - 621;
-                    const persianDateString = `${persianYear}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
-                    document.getElementById(persianInputId).value = persianDateString;
-                }
-            } catch (error) {
-                console.error('Error converting date:', error);
-                showToast('خطا در تبدیل تاریخ', true);
-            }
-        }
-        
-        // Simple Persian date picker fallback
-        function createSimpleDatePicker(inputId) {
-            const input = document.getElementById(inputId);
-            const container = document.createElement('div');
-            container.className = 'simple-date-picker';
-            container.style.cssText = `
-                position: absolute;
-                background: #333;
-                border: 1px solid #555;
-                border-radius: 8px;
-                padding: 10px;
-                z-index: 1000;
-                display: none;
-                color: white;
-            `;
-            
-            // Create calendar grid
-            const calendar = document.createElement('div');
-            calendar.style.cssText = `
-                display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                gap: 5px;
-                margin-top: 10px;
-            `;
-            
-            // Add days of week
-            const daysOfWeek = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
-            daysOfWeek.forEach(day => {
-                const dayElement = document.createElement('div');
-                dayElement.textContent = day;
-                dayElement.style.cssText = `
-                    text-align: center;
-                    padding: 5px;
-                    font-weight: bold;
-                    color: #ff6b00;
-                `;
-                calendar.appendChild(dayElement);
-            });
-            
-            // Add current month days (simplified)
-            const today = new Date();
-            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-            
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayElement = document.createElement('div');
-                dayElement.textContent = i;
-                dayElement.style.cssText = `
-                    text-align: center;
-                    padding: 5px;
-                    cursor: pointer;
-                    border-radius: 4px;
-                    transition: background-color 0.3s;
-                `;
-                
-                dayElement.addEventListener('click', function() {
-                    const persianYear = today.getFullYear() - 621;
-                    const persianMonth = today.getMonth() + 1;
-                    const persianDateString = `${persianYear}/${persianMonth.toString().padStart(2, '0')}/${i.toString().padStart(2, '0')}`;
-                    input.value = persianDateString;
-                    container.style.display = 'none';
-                });
-                
-                dayElement.addEventListener('mouseenter', function() {
-                    this.style.backgroundColor = '#ff6b00';
-                });
-                
-                dayElement.addEventListener('mouseleave', function() {
-                    this.style.backgroundColor = 'transparent';
-                });
-                
-                calendar.appendChild(dayElement);
-            }
-            
-            container.appendChild(calendar);
-            document.body.appendChild(container);
-            
-            // Position the calendar
-            const rect = input.getBoundingClientRect();
-            container.style.left = rect.left + 'px';
-            container.style.top = (rect.bottom + 5) + 'px';
-            
-            return container;
-        }
-        
-        // Initialize Persian date pickers
-        function initializeDatePickers() {
-            // Destroy existing instances if any
-            if ($('#report-start-date').data('pDatepicker')) {
-                $('#report-start-date').pDatepicker('destroy');
-            }
-            if ($('#report-end-date').data('pDatepicker')) {
-                $('#report-end-date').pDatepicker('destroy');
-            }
-            
-            $('#report-start-date').pDatepicker({
-                format: 'YYYY/MM/DD',
-                autoClose: true,
-                initialValue: false,
-                calendar: {
-                    persian: {
-                        locale: 'fa'
-                    }
-                },
-                toolbox: {
-                    calendarSwitch: {
-                        enabled: false
-                    }
-                },
-                observer: true,
-                onSelect: function(unix) {
-                    console.log('Start date selected:', unix);
-                }
-            });
-            
-            $('#report-end-date').pDatepicker({
-                format: 'YYYY/MM/DD',
-                autoClose: true,
-                initialValue: false,
-                calendar: {
-                    persian: {
-                        locale: 'fa'
-                    }
-                },
-                toolbox: {
-                    calendarSwitch: {
-                        enabled: false
-                    }
-                },
-                observer: true,
-                onSelect: function(unix) {
-                    console.log('End date selected:', unix);
-                }
-            });
-        }
-        
-        // Validate date range
-        function validateDateRange() {
-            const startDateInput = document.getElementById('report-start-date').value;
-            const endDateInput = document.getElementById('report-end-date').value;
-            
-            if (startDateInput && endDateInput) {
-                const startDate = new PersianDate(startDateInput).toDate();
-                const endDate = new PersianDate(endDateInput).toDate();
-                
-                if (startDate > endDate) {
-                    showToast('تاریخ شروع نمی‌تواند بعد از تاریخ پایان باشد', true);
-                    return false;
-                }
-            }
-            
-            return true;
-        }
-        
-        // Login functionality
-        // ...existing code...
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    
-    const users = JSON.parse(localStorage.getItem('users'));
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (user) {
-        // Record login activity
-        const userActivity = JSON.parse(localStorage.getItem('userActivity'));
-        userActivity[username] = {
-            lastLogin: new Date().toISOString()
-        };
-        localStorage.setItem('userActivity', JSON.stringify(userActivity));
-        
-        // Update profile pictures if available
-        if (user.profilePic) {
-            document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-                img.src = user.profilePic;
-            });
-        }
-
-        // ذخیره نام کاربری فعال در localStorage
-        localStorage.setItem('activeUser', user.username);
-
-        showSection('dashboard-section');
-        showToast('ورود موفقیت‌آمیز بود');
-    } else {
-        showToast('نام کاربری یا رمز عبور اشتباه است', true);
-    }
-});
-// ...existing code...
-        
-        // Logout functionality
-        function logout() {
-    localStorage.removeItem('activeUser'); // اضافه کن
-    showSection('login-section');
-    document.getElementById('login-form').reset();
-}
-        
-        // Load cities for food registration
-        function loadCities() {
-            const cities = JSON.parse(localStorage.getItem('cities'));
-            const citySelect = document.getElementById('city');
-            
-            citySelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
-            cities.forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
-        }
-        
-        // Load restaurants for food registration
-        function loadRestaurants() {
-    const restaurants = JSON.parse(localStorage.getItem('restaurants'));
-    const restaurantSelect = document.getElementById('restaurant');
-    restaurantSelect.innerHTML = '<option value="">-- انتخاب کنید --</option>';
-    restaurants.forEach(restaurant => {
-        const option = document.createElement('option');
-        option.value = restaurant;
-        option.textContent = restaurant;
-        restaurantSelect.appendChild(option);
-    });
-}
-        
-        // Load foods for selection in food registration
-        function loadFoodsForSelection() {
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            const foodSelects = document.querySelectorAll('.food-select');
-            
-            foodSelects.forEach(select => {
-                select.innerHTML = '<option value="">-- انتخاب غذا --</option>';
-                foods.forEach(food => {
-                    const option = document.createElement('option');
-                    option.value = food;
-                    option.textContent = food;
-                    select.appendChild(option);
-                });
-            });
-        }
-        
-        // Update companion fields based on count
-        function updateCompanionFields() {
-            const count = parseInt(document.getElementById('companion-count').value);
-            const container = document.getElementById('companion-fields');
-            
-            container.innerHTML = '';
-            
-            for (let i = 0; i < count; i++) {
-                const field = document.createElement('div');
-                field.className = 'companion-field';
-                field.innerHTML = `
-                    <div class="form-group">
-                        <label>نام همراه ${i + 1}</label>
-                        <div style="display: flex;">
-                            <input type="text" class="companion-name">
-                            <button type="button" class="btn remove-companion" onclick="removeCompanionField(this)">حذف</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(field);
-            }
-        }
-        
-        // Remove companion field
-        function removeCompanionField(button) {
-            const field = button.closest('.companion-field');
-            field.remove();
-            
-            // Update the count
-            const currentCount = document.getElementById('companion-count');
-            currentCount.value = parseInt(currentCount.value) - 1;
-        }
-        
-        // Add food item to the form
-        function addFoodItem() {
-            const container = document.getElementById('food-items');
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            
-            const div = document.createElement('div');
-            div.className = 'food-item';
-            div.innerHTML = `
-                <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-                <select class="food-select">
-                    <option value="">-- انتخاب غذا --</option>
-                </select>
-                <input type="number" class="food-count" min="1" value="1">
-            `;
-            
-            container.appendChild(div);
-            
-            // Load foods for the new select
-            const select = div.querySelector('.food-select');
-            foods.forEach(food => {
-                const option = document.createElement('option');
-                option.value = food;
-                option.textContent = food;
-                select.appendChild(option);
-            });
-        }
-        
-        // Remove food item from the form
-        function removeFoodItem(button) {
-            const item = button.closest('.food-item');
-            
-            // Don't allow removing the last food item
-            if (document.querySelectorAll('.food-item').length > 1) {
-                item.remove();
-            } else {
-                showToast('حداقل یک آیتم غذا باید وجود داشته باشد', true);
-            }
-        }
-        
-        // Register food request
-        document.getElementById('register-food-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    // اعتبارسنجی فیلدهای ضروری
-    const fullname = document.getElementById('fullname').value.trim();
-    const restaurant = document.getElementById('restaurant').value.trim();
-    
-    if (!fullname) {
-        showToast('لطفاً نام و نام خانوادگی را وارد کنید', true);
         return;
-    }
-    
-    if (!restaurant || restaurant === "-- انتخاب کنید --") {
-        showToast('لطفاً رستوران را انتخاب کنید', true);
-        return;
-    }
-
-    // دریافت نام همراهان
-    const companionNames = [];
-    document.querySelectorAll('.companion-name').forEach(input => {
-        if (input.value.trim()) {
-            companionNames.push(input.value.trim());
-        }
-    });
-
-    // دریافت غذاها
-    const foodItems = [];
-    let hasEmptyFood = false;
-    
-    document.querySelectorAll('.food-item').forEach(item => {
-        const foodSelect = item.querySelector('.food-select');
-        const foodCount = item.querySelector('.food-count');
-        const food = foodSelect ? foodSelect.value.trim() : '';
-        const count = foodCount ? foodCount.value : '';
-        
-        if (!food || food === "-- انتخاب غذا --") {
-            hasEmptyFood = true;
+      }
+      
+      if (currentRole === 'admin') {
+        if (username === 'عباس' && password === adminPassword) {
+          currentUser = { 
+            name: adminProfile.name, 
+            role: 'admin', 
+            photo: adminProfile.photo 
+          };
+          showAdminPanel();
         } else {
-            foodItems.push({ food, count });
+          Swal.fire({
+            title: 'خطا',
+            text: 'نام کاربری یا رمز عبور اشتباه است',
+            icon: 'error',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
         }
-    });
-
-    if (hasEmptyFood || foodItems.length === 0) {
-        showToast('لطفاً حداقل یک غذا را انتخاب کنید', true);
-        return;
+      } 
+      else if (currentRole === 'employee') {
+        const employee = employees.find(emp => emp.lastName === username && emp.password === password);
+        if (employee) {
+          currentUser = { 
+            name: employee.lastName, 
+            role: 'employee',
+            photo: employee.photo || 'https://via.placeholder.com/60x60?text=Employee'
+          };
+          showEmployeePanel();
+        } else {
+          Swal.fire({
+            title: 'خطا',
+            text: 'نام کاربری یا رمز عبور اشتباه است',
+            icon: 'error',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      }
+      else if (currentRole === 'transport') {
+        if (transportManager && username === transportManager.username && password === transportManager.password) {
+          currentUser = { 
+            name: 'مسئول نقلیه', 
+            role: 'transport',
+            photo: 'https://via.placeholder.com/60x60?text=Transport'
+          };
+          showTransportPanel();
+        } else {
+          Swal.fire({
+            title: 'خطا',
+            text: 'نام کاربری یا رمز عبور اشتباه است',
+            icon: 'error',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      }
     }
-
-    // ایجاد شیء درخواست
-    const request = {
-        id: this.dataset.editingId ? parseInt(this.dataset.editingId) : Date.now(),
-        date: new Date().toISOString(),
-        fullname,
-        city: document.getElementById('city').value.trim() || 'ثبت نشده',
-        companionCount: document.getElementById('companion-count').value || '0',
-        companionNames,
-        foodItems,
-        restaurant,
-        username: localStorage.getItem('activeUser')
-    };
-
-    // ذخیره در localStorage
-    const requests = JSON.parse(localStorage.getItem('foodRequests') || [];
     
-    if (this.dataset.editingId) {
-        // ویرایش درخواست موجود
-        const index = requests.findIndex(r => r.id.toString() === this.dataset.editingId);
+    // نمایش پنل مدیر
+    function showAdminPanel() {
+      $('#loginForm').addClass('hidden');
+      $('#adminPanel').removeClass('hidden').addClass('fade-in');
+      $('#adminName').text(`مدیر: ${currentUser.name}`);
+      $('#adminProfilePic').attr('src', currentUser.photo);
+      
+      // بارگذاری داده‌ها
+      loadEmployees();
+      loadAdminRequests();
+      
+      // پخش صوت راهنمای ورود
+      playSound('M1');
+    }
+    
+    // نمایش پنل کارمند
+    function showEmployeePanel() {
+      $('#loginForm').addClass('hidden');
+      $('#employeePanel').removeClass('hidden').addClass('fade-in');
+      $('#employeeName').text(`کارمند: ${currentUser.name}`);
+      $('#employeeProfilePic').attr('src', currentUser.photo);
+      
+      // بارگذاری درخواست‌های کارمند
+      loadEmployeeRequests();
+    }
+    
+    // نمایش پنل مسئول نقلیه
+    function showTransportPanel() {
+      $('#loginForm').addClass('hidden');
+      $('#transportPanel').removeClass('hidden').addClass('fade-in');
+      $('#transportProfilePic').attr('src', currentUser.photo);
+      
+      // بارگذاری درخواست‌های تایید شده
+      loadTransportRequests();
+      loadTransportPendingRequests();
+    }
+    
+    // خروج از سیستم
+    function logout() {
+      currentUser = null;
+      currentRole = null;
+      $('#adminPanel').addClass('hidden');
+      $('#employeePanel').addClass('hidden');
+      $('#transportPanel').addClass('hidden');
+      $('#loginPage').removeClass('hidden').addClass('fade-in');
+    }
+    
+    // نمایش بخش‌های مختلف
+    function showSection(sectionId) {
+      // مخفی کردن همه بخش‌ها
+      if (currentRole === 'admin') {
+        $('#adminPanel > .card').addClass('hidden');
+        $(`#${sectionId}`).removeClass('hidden').addClass('fade-in');
+      }
+      else if (currentRole === 'employee') {
+        $('#employeePanel > .card').addClass('hidden');
+        $(`#${sectionId}`).removeClass('hidden').addClass('fade-in');
+      }
+      else if (currentRole === 'transport') {
+        $('#transportPanel > .card').addClass('hidden');
+        $(`#${sectionId}`).removeClass('hidden').addClass('fade-in');
+      }
+    }
+    
+    // بازگشت به منوی مدیر
+    function backToAdminMenu() {
+      $('#adminPanel > .card').not(':first').addClass('hidden');
+      $('#adminPanel > .card:first').removeClass('hidden').addClass('fade-in');
+    }
+    
+    // بازگشت به منوی کارمند
+    function backToEmployeeMenu() {
+      $('#employeePanel > .card').not(':first').addClass('hidden');
+      $('#employeePanel > .card:first').removeClass('hidden').addClass('fade-in');
+    }
+    
+    // بازگشت به منوی انتخاب نوع درخواست
+    function backToRequestType() {
+      $('#missionRequest').addClass('hidden');
+      $('#leaveRequest').addClass('hidden');
+      $('#requestType').removeClass('hidden').addClass('fade-in');
+    }
+    
+    // بازگشت به منوی مسئول نقلیه
+    function backToTransportMenu() {
+      $('#transportPanel > .card').not(':first').addClass('hidden');
+      $('#transportPanel > .card:first').removeClass('hidden').addClass('fade-in');
+    }
+    
+    // نمایش فرم درخواست بر اساس نوع انتخاب شده
+    function showRequestForm() {
+      const requestType = $('#requestTypeSelect').val();
+      
+      if (requestType === 'mission') {
+        $('#requestType').addClass('hidden');
+        $('#missionRequest').removeClass('hidden').addClass('fade-in');
+      } else if (requestType === 'leave') {
+        $('#requestType').addClass('hidden');
+        $('#leaveRequest').removeClass('hidden').addClass('fade-in');
+      }
+    }
+    
+    // ثبت کارمند جدید
+    function registerEmployee() {
+      const lastName = $('#employeeLastName').val().trim();
+      const password = $('#employeePassword').val().trim();
+      const photoFile = $('#employeePhoto')[0].files[0];
+      
+      if (!lastName || !password) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً نام خانوادگی و رمز عبور را وارد کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      if (editingEmployeeId) {
+        // ویرایش کارمند موجود
+        const index = employees.findIndex(emp => emp.id === editingEmployeeId);
         if (index !== -1) {
-            requests[index] = request;
+          employees[index].lastName = lastName;
+          employees[index].password = password;
+          
+          if (photoFile) {
+            employees[index].photo = URL.createObjectURL(photoFile);
+          }
+          
+          localStorage.setItem('employees', JSON.stringify(employees));
+          
+          Swal.fire({
+            title: 'موفق',
+            text: 'اطلاعات کارمند با موفقیت به‌روزرسانی شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+          
+          editingEmployeeId = null;
         }
-        delete this.dataset.editingId;
-    } else {
-        // افزودن درخواست جدید
-        requests.push(request);
-    }
-    
-    localStorage.setItem('foodRequests', JSON.stringify(requests));
-
-    // ریست فرم
-    this.reset();
-    document.getElementById('companion-fields').innerHTML = '';
-    
-    // ریست آیتم‌های غذا به یک مورد
-    const foodItemsContainer = document.getElementById('food-items');
-    foodItemsContainer.innerHTML = `
-        <div class="food-item">
-            <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-            <select class="food-select">
-                <option value="">-- انتخاب غذا --</option>
-            </select>
-            <input type="number" class="food-count" min="1" value="1">
-        </div>
-    `;
-    loadFoodsForSelection();
-    
-    showToast(this.dataset.editingId ? 'درخواست غذا با موفقیت ویرایش شد' : 'درخواست غذا با موفقیت ثبت شد');
-    
-    // نمایش نامه PDF
-    generateFoodPDF(request);
-});
+      } else {
+        // ثبت کارمند جدید
+        if (employees.some(emp => emp.lastName === lastName)) {
+          Swal.fire({
+            title: 'خطا',
+            text: 'کارمند با این نام خانوادگی قبلاً ثبت شده است',
+            icon: 'error',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+          return;
+        }
         
-        // Generate PDF for food request
-        function generateFoodPDF(requestData = null) {
-    // اگر داده از طریق پارامتر نیامده، از فرم بخوان
-    let fullname, city, companionCount, restaurant, foodItems, date;
-    
-    if (requestData) {
-        // استفاده از داده‌های ارسال شده
-        fullname = requestData.fullname;
-        city = requestData.city;
-        companionCount = requestData.companionCount;
-        restaurant = requestData.restaurant;
-        foodItems = requestData.foodItems;
-        date = new Date(requestData.date);
-    } else {
-        // خواندن از فرم
-        fullname = document.getElementById('fullname').value.trim();
-        city = document.getElementById('city').value.trim();
-        companionCount = document.getElementById('companion-count').value;
-        restaurant = document.getElementById('restaurant').value.trim();
+        let photoUrl = 'https://via.placeholder.com/60x60?text=Employee';
+        if (photoFile) {
+          photoUrl = URL.createObjectURL(photoFile);
+        }
         
-        // خواندن غذاها از فرم
-        foodItems = [];
-        document.querySelectorAll('.food-item').forEach(item => {
-            const foodSelect = item.querySelector('.food-select');
-            const foodCount = item.querySelector('.food-count');
-            const food = foodSelect ? foodSelect.value.trim() : '';
-            const count = foodCount ? foodCount.value : '';
-            if (food) {
-                foodItems.push({ food, count });
-            }
+        const newEmployee = {
+          id: Date.now(),
+          lastName,
+          password,
+          photo: photoUrl
+        };
+        
+        employees.push(newEmployee);
+        localStorage.setItem('employees', JSON.stringify(employees));
+        
+        Swal.fire({
+          title: 'موفق',
+          text: 'کارمند جدید با موفقیت ثبت شد',
+          icon: 'success',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
         });
+        playSound('M3');
+      }
+      
+      // ریست فرم
+      $('#employeeLastName').val('');
+      $('#employeePassword').val('');
+      $('#employeePhoto').val('');
+      
+      // بارگذاری مجدد لیست کارمندان
+      loadEmployees();
+      
+      // بازگشت به منوی اصلی
+      backToAdminMenu();
+    }
+    
+    // نمایش لیست کارمندان
+    function loadEmployees() {
+      let html = '';
+      employees.forEach(employee => {
+        html += `
+          <div class="request-item">
+            <div class="profile-header" style="margin-bottom: 10px;">
+              <img src="${employee.photo}" alt="${employee.lastName}" class="profile-pic" style="width: 40px; height: 40px;">
+              <h4>${employee.lastName}</h4>
+            </div>
+            <div class="action-btns">
+              <button class="btn btn-warning action-btn" onclick="editEmployee(${employee.id})">
+                <i class="fas fa-edit"></i> ویرایش
+              </button>
+              <button class="btn btn-danger action-btn" onclick="deleteEmployee(${employee.id})">
+                <i class="fas fa-trash"></i> حذف
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      $('#employeesList').html(html || '<p>هیچ کارمندی ثبت نشده است</p>');
+    }
+    
+    // ویرایش کارمند
+    function editEmployee(employeeId) {
+      const employee = employees.find(emp => emp.id === employeeId);
+      if (employee) {
+        editingEmployeeId = employee.id;
+        $('#employeeLastName').val(employee.lastName);
+        $('#employeePassword').val(employee.password);
         
-        date = new Date();
+        // نمایش فرم ویرایش
+        showSection('registerEmployee');
+        $('#registerEmployee h3').text('ویرایش کارمند');
+      }
     }
-
-    // اعتبارسنجی نهایی
-    if (!fullname || !restaurant || foodItems.length === 0) {
-        console.error("داده‌های ضروری پر نشده‌اند");
+    
+    // حذف کارمند
+    function deleteEmployee(employeeId) {
+      Swal.fire({
+        title: 'هشدار',
+        text: 'آیا مطمئن هستید که می‌خواهید این کارمند را حذف کنید؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'بله، حذف کن',
+        cancelButtonText: 'انصراف',
+        background: '#1e1e1e',
+        color: '#ffffff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          employees = employees.filter(emp => emp.id !== employeeId);
+          localStorage.setItem('employees', JSON.stringify(employees));
+          
+          // حذف درخواست‌های مربوط به این کارمند
+          missionRequests = missionRequests.filter(req => req.employeeName !== employees.find(e => e.id === employeeId)?.lastName);
+          localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+          
+          Swal.fire({
+            title: 'موفق',
+            text: 'کارمند با موفقیت حذف شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+          
+          loadEmployees();
+        }
+      });
+    }
+    
+    // نمایش درخواست‌های مدیر
+    function loadAdminRequests() {
+      let html = '';
+      
+      // نمایش درخواست‌های مأموریت
+      missionRequests.forEach(request => {
+        const statusClass = request.status === 'approved' ? 'approved' : 
+                          request.status === 'rejected' ? 'rejected' : 
+                          request.status === 'transport-approved' ? 'approved' : 'pending';
+        
+        const statusIcon = request.status === 'approved' ? '✅' : 
+                         request.status === 'rejected' ? '❌' : 
+                         request.status === 'transport-approved' ? '✅ (تایید نهایی)' : '🕒';
+        
+        html += `
+          <div class="request-item ${statusClass}">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.employeeName}</strong>
+              <span>${request.date} ${statusIcon} (مأموریت)</span>
+            </div>
+            <div>محل: ${request.location}</div>
+            <div>ساعت: ${request.departureTime} - ${request.returnTime}</div>
+            <div>نوع: ${request.type === 'driver' ? 'راننده (' + request.carType + ')' : 'همراه'}</div>
+            <div class="action-btns">
+              ${request.status === 'pending' ? `
+                <button class="btn btn-success action-btn" onclick="approveRequest(${request.id}, 'mission')">
+                  <i class="fas fa-check"></i> تأیید
+                </button>
+                <button class="btn btn-danger action-btn" onclick="rejectRequest(${request.id}, 'mission')">
+                  <i class="fas fa-times"></i> رد
+                </button>
+              ` : ''}
+              ${request.status === 'approved' && request.type === 'driver' ? `
+                <small>در انتظار تایید نهایی توسط مسئول نقلیه</small>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      // نمایش درخواست‌های مرخصی
+      leaveRequests.forEach(request => {
+        const statusClass = request.status === 'approved' ? 'approved' : 
+                          request.status === 'rejected' ? 'rejected' : 'pending';
+        
+        const statusIcon = request.status === 'approved' ? '✅' : 
+                         request.status === 'rejected' ? '❌' : '🕒';
+        
+        html += `
+          <div class="request-item ${statusClass}">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.employeeName}</strong>
+              <span>${request.date} ${statusIcon} (مرخصی)</span>
+            </div>
+            <div>ساعت: ${request.startTime} - ${request.endTime}</div>
+            <div class="action-btns">
+              ${request.status === 'pending' ? `
+                <button class="btn btn-success action-btn" onclick="approveRequest(${request.id}, 'leave')">
+                  <i class="fas fa-check"></i> تأیید
+                </button>
+                <button class="btn btn-danger action-btn" onclick="rejectRequest(${request.id}, 'leave')">
+                  <i class="fas fa-times"></i> رد
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      $('#requestsListAdmin').html(html || '<p>هیچ درخواستی ثبت نشده است</p>');
+    }
+    
+    // نمایش درخواست‌های کارمند
+    function loadEmployeeRequests() {
+      if (!currentUser) return;
+      
+      let html = '';
+      
+      // نمایش درخواست‌های مأموریت
+      const employeeMissionRequests = missionRequests.filter(req => req.employeeName === currentUser.name);
+      employeeMissionRequests.forEach(request => {
+        const statusClass = request.status === 'approved' ? 'approved' : 
+                          request.status === 'rejected' ? 'rejected' : 
+                          request.status === 'transport-approved' ? 'approved' : 'pending';
+        const statusText = request.status === 'approved' ? 
+                          (request.type === 'driver' ? '✅ تأیید شده (در انتظار مسئول نقلیه)' : '✅ تأیید شده') : 
+                         request.status === 'rejected' ? '❌ رد شده' : 
+                         request.status === 'transport-approved' ? '✅ تأیید نهایی شده' : '🕒 در انتظار';
+        
+        html += `
+          <div class="request-item ${statusClass}">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.date}</strong>
+              <span>${statusText} (مأموریت)</span>
+            </div>
+            <div>محل: ${request.location}</div>
+            <div>ساعت: ${request.departureTime} - ${request.returnTime}</div>
+            <div>نوع: ${request.type === 'driver' ? 'راننده (' + request.carType + ')' : 'همراه'}</div>
+          </div>
+        `;
+      });
+      
+      // نمایش درخواست‌های مرخصی
+      const employeeLeaveRequests = leaveRequests.filter(req => req.employeeName === currentUser.name);
+      employeeLeaveRequests.forEach(request => {
+        const statusClass = request.status === 'approved' ? 'approved' : 
+                          request.status === 'rejected' ? 'rejected' : 'pending';
+        const statusText = request.status === 'approved' ? '✅ تأیید شده' : 
+                         request.status === 'rejected' ? '❌ رد شده' : '🕒 در انتظار';
+        
+        html += `
+          <div class="request-item ${statusClass}">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.date}</strong>
+              <span>${statusText} (مرخصی)</span>
+            </div>
+            <div>ساعت: ${request.startTime} - ${request.endTime}</div>
+          </div>
+        `;
+      });
+      
+      $('#employeeRequestsList').html(html || '<p>هیچ درخواستی ثبت نکرده‌اید</p>');
+    }
+    
+    // نمایش درخواست‌های تایید شده برای مسئول نقلیه
+    function loadTransportRequests() {
+      const approvedRequests = missionRequests.filter(req => 
+        req.status === 'transport-approved' || 
+        (req.status === 'approved' && req.type === 'companion')
+      );
+      
+      let html = '';
+      approvedRequests.forEach(request => {
+        html += `
+          <div class="request-item approved">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.employeeName}</strong>
+              <span>${request.date}</span>
+            </div>
+            <div>محل: ${request.location}</div>
+            <div>ساعت: ${request.departureTime} - ${request.returnTime}</div>
+            <div>نوع خودرو: ${request.carType || '-'}</div>
+            <div>نوع: ${request.type === 'driver' ? 'راننده' : 'همراه'}</div>
+            <div>وضعیت: ${request.status === 'transport-approved' ? 'تایید نهایی شده' : 'تایید شده'}</div>
+          </div>
+        `;
+      });
+      
+      $('#transportRequestsList').html(html || '<p>هیچ درخواست تایید شده‌ای وجود ندارد</p>');
+    }
+    
+    // نمایش درخواست‌های در انتظار تایید مسئول نقلیه
+    function loadTransportPendingRequests() {
+      const pendingRequests = missionRequests.filter(req => 
+        req.status === 'approved' && req.type === 'driver'
+      );
+      
+      let html = '';
+      pendingRequests.forEach(request => {
+        html += `
+          <div class="request-item transport-pending">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.employeeName}</strong>
+              <span>${request.date}</span>
+            </div>
+            <div>محل: ${request.location}</div>
+            <div>ساعت: ${request.departureTime} - ${request.returnTime}</div>
+            <div>نوع خودرو: ${request.carType || '-'}</div>
+            <div class="action-btns">
+              <button class="btn btn-success action-btn" onclick="transportApproveRequest(${request.id})">
+                <i class="fas fa-check"></i> تأیید نهایی
+              </button>
+              <button class="btn btn-danger action-btn" onclick="transportRejectRequest(${request.id})">
+                <i class="fas fa-times"></i> رد
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      $('#transportPendingList').html(html || '<p>هیچ درخواستی برای تایید نهایی وجود ندارد</p>');
+    }
+    
+    // ثبت درخواست مأموریت
+    function submitMissionRequest() {
+      if (!currentUser) return;
+      
+      const type = $('input[name="missionType"]:checked').val();
+      const carType = type === 'driver' ? $('#carType').val() : null;
+      const location = $('#missionLocation').val().trim();
+      const date = $('#missionDate').val().split(' - ')[0];
+      const departureHour = $('#departureHour').val();
+      const departureMinute = $('#departureMinute').val();
+      const returnHour = $('#returnHour').val();
+      const returnMinute = $('#returnMinute').val();
+      
+      if (!location || !date || !departureHour || !departureMinute || !returnHour || !returnMinute) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً تمام فیلدهای ضروری را پر کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
         return;
+      }
+      
+      if (type === 'driver' && !carType) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً نوع خودرو را انتخاب کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      const newRequest = {
+        id: Date.now(),
+        employeeName: currentUser.name,
+        type,
+        carType,
+        location,
+        date,
+        departureTime: `${departureHour}:${departureMinute}`,
+        returnTime: `${returnHour}:${returnMinute}`,
+        status: 'pending',
+        timestamp: new Date().toISOString()
+      };
+      
+      missionRequests.push(newRequest);
+      localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+      
+      Swal.fire({
+        title: 'موفق',
+        text: 'درخواست مأموریت با موفقیت ثبت شد',
+        icon: 'success',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
+      playSound('M2');
+      
+      // ریست فرم
+      $('#missionLocation').val('');
+      $('#missionDate').val('');
+      $('#departureHour, #departureMinute, #returnHour, #returnMinute').val('');
+      if (type === 'driver') {
+        $('#carType').val('');
+      }
+      
+      // بارگذاری مجدد لیست درخواست‌ها
+      loadEmployeeRequests();
+      
+      // بازگشت به منوی اصلی
+      backToEmployeeMenu();
     }
-
-    // پر کردن اطلاعات در بخش PDF
-    document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
-    document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
-    document.getElementById('pdf-companion-count').textContent = companionCount || '0';
-    document.getElementById('pdf-restaurant').textContent = restaurant;
-
-    // تاریخ شمسی
-    let persianDate;
-    if (typeof PersianDate !== 'undefined') {
-        persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
-    } else {
-        // Fallback به تاریخ میلادی
-        persianDate = date.toLocaleString('fa-IR');
+    
+    // ثبت درخواست مرخصی
+    function submitLeaveRequest() {
+      if (!currentUser) return;
+      
+      const date = $('#leaveDate').val().split(' - ')[0];
+      const startHour = $('#leaveStartHour').val();
+      const startMinute = $('#leaveStartMinute').val();
+      const endHour = $('#leaveEndHour').val();
+      const endMinute = $('#leaveEndMinute').val();
+      
+      if (!date || !startHour || !startMinute || !endHour || !endMinute) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً تمام فیلدهای ضروری را پر کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      const newRequest = {
+        id: Date.now(),
+        employeeName: currentUser.name,
+        date,
+        startTime: `${startHour}:${startMinute}`,
+        endTime: `${endHour}:${endMinute}`,
+        status: 'pending',
+        timestamp: new Date().toISOString()
+      };
+      
+      leaveRequests.push(newRequest);
+      localStorage.setItem('leaveRequests', JSON.stringify(leaveRequests));
+      
+      Swal.fire({
+        title: 'موفق',
+        text: 'درخواست مرخصی با موفقیت ثبت شد',
+        icon: 'success',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
+      playSound('M2');
+      
+      // ریست فرم
+      $('#leaveDate').val('');
+      $('#leaveStartHour, #leaveStartMinute, #leaveEndHour, #leaveEndMinute').val('');
+      
+      // بارگذاری مجدد لیست درخواست‌ها
+      loadEmployeeRequests();
+      
+      // بازگشت به منوی اصلی
+      backToEmployeeMenu();
     }
-    document.getElementById('pdf-date').textContent = persianDate;
-
-    // لیست غذاها
-    const foodList = document.getElementById('pdf-foods');
-    foodList.innerHTML = '';
-    foodItems.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.food} (${item.count} عدد)`;
-        foodList.appendChild(li);
+    
+    // نمایش/پنهان کردن فیلد خودرو
+    function toggleCarField() {
+      const type = $('input[name="missionType"]:checked').val();
+      if (type === 'driver') {
+        $('#carField').show();
+      } else {
+        $('#carField').hide();
+      }
+    }
+    
+    // تایید درخواست توسط مدیر
+    function approveRequest(requestId, requestType) {
+      if (requestType === 'mission') {
+        const request = missionRequests.find(req => req.id === requestId);
+        if (request) {
+          request.status = 'approved';
+          localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+          loadAdminRequests();
+          playSound('M3');
+          Swal.fire({
+            title: 'موفق',
+            text: request.type === 'driver' ? 
+              'درخواست تایید شد و در انتظار تایید نهایی مسئول نقلیه است' : 
+              'درخواست تایید شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      } else if (requestType === 'leave') {
+        const request = leaveRequests.find(req => req.id === requestId);
+        if (request) {
+          request.status = 'approved';
+          localStorage.setItem('leaveRequests', JSON.stringify(leaveRequests));
+          loadAdminRequests();
+          playSound('M3');
+          Swal.fire({
+            title: 'موفق',
+            text: 'درخواست مرخصی تایید شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      }
+    }
+    
+    // رد درخواست توسط مدیر
+    function rejectRequest(requestId, requestType) {
+      if (requestType === 'mission') {
+        const request = missionRequests.find(req => req.id === requestId);
+        if (request) {
+          request.status = 'rejected';
+          localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+          loadAdminRequests();
+          playSound('M5');
+          Swal.fire({
+            title: 'موفق',
+            text: 'درخواست رد شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      } else if (requestType === 'leave') {
+        const request = leaveRequests.find(req => req.id === requestId);
+        if (request) {
+          request.status = 'rejected';
+          localStorage.setItem('leaveRequests', JSON.stringify(leaveRequests));
+          loadAdminRequests();
+          playSound('M5');
+          Swal.fire({
+            title: 'موفق',
+            text: 'درخواست مرخصی رد شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+        }
+      }
+    }
+    
+    // تایید درخواست توسط مسئول نقلیه
+    function transportApproveRequest(requestId) {
+      const request = missionRequests.find(req => req.id === requestId);
+      if (request) {
+        request.status = 'transport-approved';
+        localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+        loadTransportPendingRequests();
+        loadTransportRequests();
+        playSound('M4');
+        Swal.fire({
+          title: 'موفق',
+          text: 'درخواست با موفقیت تایید نهایی شد',
+          icon: 'success',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+      }
+    }
+    
+    // رد درخواست توسط مسئول نقلیه
+    function transportRejectRequest(requestId) {
+      const request = missionRequests.find(req => req.id === requestId);
+      if (request) {
+        request.status = 'pending';
+        localStorage.setItem('missionRequests', JSON.stringify(missionRequests));
+        loadTransportPendingRequests();
+        Swal.fire({
+          title: 'موفق',
+          text: 'درخواست رد شد و به وضعیت انتظار بازگشت',
+          icon: 'success',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+      }
+    }
+    
+    // تغییر رمز مدیر
+    function changeAdminPassword() {
+      const currentPassword = $('#currentAdminPassword').val();
+      const newPassword = $('#newAdminPassword').val();
+      const confirmPassword = $('#confirmAdminPassword').val();
+      
+      if (currentPassword !== adminPassword) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'رمز عبور فعلی اشتباه است',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      if (newPassword !== confirmPassword) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'رمز عبور جدید و تکرار آن مطابقت ندارند',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      adminPassword = newPassword;
+      localStorage.setItem('adminPassword', adminPassword);
+      
+      Swal.fire({
+        title: 'موفق',
+        text: 'رمز عبور با موفقیت تغییر یافت',
+        icon: 'success',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
+      
+      $('#currentAdminPassword').val('');
+      $('#newAdminPassword').val('');
+      $('#confirmAdminPassword').val('');
+      
+      // بازگشت به منوی اصلی
+      backToAdminMenu();
+    }
+    
+    // ویرایش پروفایل مدیر
+    function updateAdminProfile() {
+      const fullName = $('#adminFullName').val().trim();
+      const photoFile = $('#adminProfileImage')[0].files[0];
+      
+      if (!fullName) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً نام کامل را وارد کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      if (photoFile) {
+        adminProfile.photo = URL.createObjectURL(photoFile);
+      }
+      
+      adminProfile.name = fullName;
+      localStorage.setItem('adminProfile', JSON.stringify(adminProfile));
+      
+      // به‌روزرسانی نمایش
+      $('#adminName').text(`مدیر: ${fullName}`);
+      $('#adminProfilePic').attr('src', adminProfile.photo);
+      
+      Swal.fire({
+        title: 'موفق',
+        text: 'پروفایل با موفقیت به‌روزرسانی شد',
+        icon: 'success',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
+      
+      // بازگشت به منوی اصلی
+      backToAdminMenu();
+    }
+    
+    // ثبت مسئول نقلیه
+    function registerTransportManager() {
+      const username = $('#transportUsername').val().trim();
+      const password = $('#transportPassword').val().trim();
+      
+      if (!username || !password) {
+        Swal.fire({
+          title: 'خطا',
+          text: 'لطفاً نام کاربری و رمز عبور را وارد کنید',
+          icon: 'error',
+          background: '#1e1e1e',
+          color: '#ffffff',
+          confirmButtonText: 'متوجه شدم'
+        });
+        return;
+      }
+      
+      transportManager = { username, password };
+      localStorage.setItem('transportManager', JSON.stringify(transportManager));
+      
+      Swal.fire({
+        title: 'موفق',
+        text: 'مسئول نقلیه با موفقیت ثبت شد',
+        icon: 'success',
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonText: 'متوجه شدم'
+      });
+      
+      $('#transportUsername').val('');
+      $('#transportPassword').val('');
+      
+      // بازگشت به منوی اصلی
+      backToAdminMenu();
+    }
+    
+    // جستجو در درخواست‌ها
+    function searchRequests() {
+      const carType = $('#searchCarType').val();
+      const startDate = $('#searchStartDate').val();
+      const endDate = $('#searchEndDate').val();
+      
+      let results = missionRequests.filter(req => 
+        req.status === 'transport-approved' || 
+        (req.status === 'approved' && req.type === 'companion')
+      );
+      
+      if (carType) {
+        results = results.filter(req => req.carType === carType);
+      }
+      
+      if (startDate) {
+        results = results.filter(req => req.date >= startDate);
+      }
+      
+      if (endDate) {
+        results = results.filter(req => req.date <= endDate);
+      }
+      
+      let html = '';
+      results.forEach(request => {
+        html += `
+          <div class="request-item approved" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between;">
+              <strong>${request.employeeName}</strong>
+              <span>${request.date}</span>
+            </div>
+            <div>محل: ${request.location}</div>
+            <div>ساعت: ${request.departureTime} - ${request.returnTime}</div>
+            <div>نوع خودرو: ${request.carType || '-'}</div>
+            <div>نوع: ${request.type === 'driver' ? 'راننده' : 'همراه'}</div>
+            <div>وضعیت: ${request.status === 'transport-approved' ? 'تایید نهایی شده' : 'تایید شده'}</div>
+          </div>
+        `;
+      });
+      
+      $('#searchResults').html(html || '<p>هیچ نتیجه‌ای یافت نشد</p>');
+    }
+    
+    // خروجی به PDF
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      doc.setFont('Vazirmatn', 'normal');
+      doc.setTextColor(255, 255, 255);
+      doc.setFillColor(30, 30, 30);
+      doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+      
+      doc.setTextColor(0, 188, 212);
+      doc.setFontSize(20);
+      doc.text('گزارش درخواست‌های مأموریت', 105, 20, { align: 'center' });
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      
+      let y = 40;
+      
+      // درخواست‌های مأموریت
+      missionRequests.forEach((req, index) => {
+        doc.text(`${index + 1}. ${req.employeeName} - ${req.date} (مأموریت)`, 20, y);
+        doc.text(`محل: ${req.location}`, 20, y + 10);
+        doc.text(`ساعت: ${req.departureTime} - ${req.returnTime}`, 20, y + 20);
+        doc.text(`وضعیت: ${req.status === 'approved' ? 'تایید شده' : req.status === 'rejected' ? 'رد شده' : req.status === 'transport-approved' ? 'تایید نهایی شده' : 'در انتظار'}`, 20, y + 30);
+        y += 40;
+        
+        if (y > 250) {
+          doc.addPage();
+          doc.setFillColor(30, 30, 30);
+          doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+          y = 20;
+        }
+      });
+      
+      // درخواست‌های مرخصی
+      leaveRequests.forEach((req, index) => {
+        doc.text(`${index + 1}. ${req.employeeName} - ${req.date} (مرخصی)`, 20, y);
+        doc.text(`ساعت: ${req.startTime} - ${req.endTime}`, 20, y + 10);
+        doc.text(`وضعیت: ${req.status === 'approved' ? 'تایید شده' : req.status === 'rejected' ? 'رد شده' : 'در انتظار'}`, 20, y + 20);
+        y += 30;
+        
+        if (y > 250) {
+          doc.addPage();
+          doc.setFillColor(30, 30, 30);
+          doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+          y = 20;
+        }
+      });
+      
+      doc.save('گزارش_درخواست‌ها.pdf');
+    }
+    
+    // خروجی به Excel
+    function exportToExcel() {
+      // داده‌های مأموریت
+      const missionData = missionRequests.map(req => ({
+        'نوع درخواست': 'مأموریت',
+        'نام کارمند': req.employeeName,
+        'تاریخ': req.date,
+        'محل': req.location || '-',
+        'ساعت شروع': req.departureTime,
+        'ساعت پایان': req.returnTime,
+        'نوع': req.type === 'driver' ? 'راننده' : 'همراه',
+        'خودرو': req.carType || '-',
+        'وضعیت': req.status === 'approved' ? 'تایید شده' : 
+                 req.status === 'rejected' ? 'رد شده' : 
+                 req.status === 'transport-approved' ? 'تایید نهایی شده' : 'در انتظار'
+      }));
+      
+      // داده‌های مرخصی
+      const leaveData = leaveRequests.map(req => ({
+        'نوع درخواست': 'مرخصی',
+        'نام کارمند': req.employeeName,
+        'تاریخ': req.date,
+        'ساعت شروع': req.startTime,
+        'ساعت پایان': req.endTime,
+        'وضعیت': req.status === 'approved' ? 'تایید شده' : 
+                 req.status === 'rejected' ? 'رد شده' : 'در انتظار'
+      }));
+      
+      // ترکیب داده‌ها
+      const data = [...missionData, ...leaveData];
+      
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "گزارش درخواست‌ها");
+      XLSX.writeFile(wb, "گزارش_درخواست‌ها.xlsx");
+    }
+    
+    // خروجی جستجو به PDF
+    function exportSearchToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      doc.setFont('Vazirmatn', 'normal');
+      doc.setTextColor(255, 255, 255);
+      doc.setFillColor(30, 30, 30);
+      doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+      
+      doc.setTextColor(0, 188, 212);
+      doc.setFontSize(20);
+      doc.text('گزارش جستجوی مأموریت‌ها', 105, 20, { align: 'center' });
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      
+      const carType = $('#searchCarType').val();
+      const startDate = $('#searchStartDate').val();
+      const endDate = $('#searchEndDate').val();
+      
+      let results = missionRequests.filter(req => 
+        req.status === 'transport-approved' || 
+        (req.status === 'approved' && req.type === 'companion')
+      );
+      
+      if (carType) {
+        results = results.filter(req => req.carType === carType);
+      }
+      
+      if (startDate) {
+        results = results.filter(req => req.date >= startDate);
+      }
+      
+      if (endDate) {
+        results = results.filter(req => req.date <= endDate);
+      }
+      
+      let y = 40;
+      results.forEach((req, index) => {
+        doc.text(`${index + 1}. ${req.employeeName} - ${req.date}`, 20, y);
+        doc.text(`محل: ${req.location}`, 20, y + 10);
+        doc.text(`ساعت: ${req.departureTime} - ${req.returnTime}`, 20, y + 20);
+        doc.text(`نوع خودرو: ${req.carType || '-'}`, 20, y + 30);
+        doc.text(`نوع: ${req.type === 'driver' ? 'راننده' : 'همراه'}`, 20, y + 40);
+        doc.text(`وضعیت: ${req.status === 'transport-approved' ? 'تایید نهایی شده' : 'تایید شده'}`, 20, y + 50);
+        y += 60;
+        
+        if (y > 250) {
+          doc.addPage();
+          doc.setFillColor(30, 30, 30);
+          doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+          y = 20;
+        }
+      });
+      
+      doc.save('گزارش_جستجوی_مأموریت.pdf');
+    }
+    
+    // خروجی جستجو به Excel
+    function exportSearchToExcel() {
+      const carType = $('#searchCarType').val();
+      const startDate = $('#searchStartDate').val();
+      const endDate = $('#searchEndDate').val();
+      
+      let results = missionRequests.filter(req => 
+        req.status === 'transport-approved' || 
+        (req.status === 'approved' && req.type === 'companion')
+      );
+      
+      if (carType) {
+        results = results.filter(req => req.carType === carType);
+      }
+      
+      if (startDate) {
+        results = results.filter(req => req.date >= startDate);
+      }
+      
+      if (endDate) {
+        results = results.filter(req => req.date <= endDate);
+      }
+      
+      const data = results.map(req => ({
+        'نام کارمند': req.employeeName,
+        'تاریخ': req.date,
+        'محل': req.location,
+        'ساعت شروع': req.departureTime,
+        'ساعت پایان': req.returnTime,
+        'نوع خودرو': req.carType || '-',
+        'نوع': req.type === 'driver' ? 'راننده' : 'همراه',
+        'وضعیت': req.status === 'transport-approved' ? 'تایید نهایی شده' : 'تایید شده'
+      }));
+      
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "گزارش جستجو");
+      XLSX.writeFile(wb, "گزارش_جستجوی_مأموریت.xlsx");
+    }
+    
+    // ریست سیستم
+    function resetSystem() {
+      Swal.fire({
+        title: 'هشدار',
+        text: 'آیا مطمئن هستید که می‌خواهید تمام اطلاعات سیستم را پاک کنید؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'بله، پاک کن',
+        cancelButtonText: 'انصراف',
+        background: '#1e1e1e',
+        color: '#ffffff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.clear();
+          employees = [];
+          transportManager = null;
+          missionRequests = [];
+          leaveRequests = [];
+          adminPassword = '1335';
+          adminProfile = { name: 'عباس', photo: 'https://via.placeholder.com/60x60?text=Admin' };
+          
+          Swal.fire({
+            title: 'موفق',
+            text: 'تمام اطلاعات سیستم با موفقیت پاک شد',
+            icon: 'success',
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonText: 'متوجه شدم'
+          });
+          logout();
+        }
+      });
+    }
+    
+    // مقداردهی اولیه
+    $(document).ready(function() {
+      // تنظیم تقویم فارسی
+      $('#missionDate, #leaveDate, #exportStartDate, #exportEndDate, #searchStartDate, #searchEndDate').pDatepicker({
+        format: 'YYYY/MM/DD',
+        autoClose: true,
+        calendarType: 'persian',
+        initialValue: false,
+        toolbox: {
+          calendarSwitch: {
+            enabled: false
+          },
+          todayButton: {
+            enabled: true,
+            text: {
+              fa: "📌 امروز"
+            }
+          },
+          submitButton: {
+            enabled: false
+          }
+        },
+        onShow: function() {
+          $('.datepicker-plot-area').css({
+            'background-color': '#1e1e1e',
+            'color': '#ffffff'
+          });
+        }
+      });
+      
+      // بارگذاری پروفایل مدیر
+      if (adminProfile) {
+        $('#adminFullName').val(adminProfile.name);
+      }
+      
+      // پخش صوت راهنمای ورود
+      playSound('M1');
     });
-
-    // اطلاعات مسئول و امضا
-    const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
-    document.getElementById('pdf-admin-name').textContent = adminSettings.adminName || 'مسئول امور اداری';
-    
-    const signatureImg = document.getElementById('pdf-signature');
-    if (adminSettings.signature) {
-        signatureImg.src = adminSettings.signature;
-        signatureImg.style.display = 'block';
-    } else {
-        signatureImg.style.display = 'none';
-    }
-
-    // نمایش بخش چاپ و پرینت
-    document.getElementById('pdf-print-section').classList.remove('hidden');
-    
-    // تأخیر برای اطمینان از رندر شدن کامل قبل از پرینت
-    setTimeout(() => {
-        window.print();
-        document.getElementById('pdf-print-section').classlassList.add('hidden');
-    }, 500);
-}
-
-
-
-        // Load reports
-        function loadReports() {
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            const tableBody = document.querySelector('#reports-table tbody');
-            
-            tableBody.innerHTML = '';
-            
-            requests.forEach(request => {
-                const tr = document.createElement('tr');
-                
-                // Format date
-                const date = new Date(request.date);
-                const persianDate = new PersianDate(date).format('YYYY/MM/DD');
-                
-                // Format food items
-                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
-                
-                tr.innerHTML = `
-                    <td>${persianDate}</td>
-                    <td>${request.fullname}</td>
-                    <td>${request.city}</td>
-                    <td>${request.companionCount}</td>
-                    <td>${foodItems}</td>
-                    <td>${request.restaurant}</td>
-                `;
-                
-                tableBody.appendChild(tr);
-            });
-        }
-        
-        // Load filter options
-        function loadFilterOptions() {
-            const cities = JSON.parse(localStorage.getItem('cities'));
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            
-            const citySelect = document.getElementById('report-city');
-            const foodSelect = document.getElementById('report-food');
-            
-            citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
-            cities.forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
-            
-            foodSelect.innerHTML = '<option value="">همه غذاها</option>';
-            foods.forEach(food => {
-                const option = document.createElement('option');
-                option.value = food;
-                option.textContent = food;
-                foodSelect.appendChild(option);
-            });
-        }
-        
-        // Filter reports
-        function filterReports() {
-            if (!validateDateRange()) return;
-            
-            const startDateInput = document.getElementById('report-start-date').value;
-            const endDateInput = document.getElementById('report-end-date').value;
-            const city = document.getElementById('report-city').value;
-            const food = document.getElementById('report-food').value;
-            
-            const requests = JSON.parse(localStorage.getItem('foodRequests'));
-            const tableBody = document.querySelector('#reports-table tbody');
-            
-            tableBody.innerHTML = '';
-            
-            // Convert Persian dates to Gregorian for comparison
-            let startDate = null;
-            if (startDateInput) {
-                const pd = new PersianDate(startDateInput);
-                startDate = pd.toDate();
-            }
-            
-            let endDate = null;
-            if (endDateInput) {
-                const pd = new PersianDate(endDateInput);
-                endDate = pd.toDate();
-                // Add one day to include the end date
-                endDate.setDate(endDate.getDate() + 1);
-            }
-            
-            requests.forEach(request => {
-                const requestDate = new Date(request.date);
-                
-                // Filter by date
-                if (startDate && requestDate < startDate) return;
-                if (endDate && requestDate >= endDate) return;
-                
-                // Filter by city
-                if (city && request.city !== city) return;
-                
-                // Filter by food
-                if (food) {
-                    const hasFood = request.foodItems.some(item => item.food === food);
-                    if (!hasFood) return;
-                }
-                
-                // If passed all filters, add to table
-                const tr = document.createElement('tr');
-                
-                // Format date
-                const persianDate = new PersianDate(requestDate).format('YYYY/MM/DD');
-                
-                // Format food items
-                const foodItems = request.foodItems.map(item => `${item.food} (${item.count})`).join('، ');
-                
-                tr.innerHTML = `
-                    <td>${persianDate}</td>
-                    <td>${request.fullname}</td>
-                    <td>${request.city}</td>
-                    <td>${request.companionCount}</td>
-                    <td>${foodItems}</td>
-                    <td>${request.restaurant}</td>
-                `;
-                
-                tableBody.appendChild(tr);
-            });
-        }
-        
-        // Export to Excel with Persian support
-        function exportToExcel() {
-            const table = document.getElementById('reports-table');
-            const rows = table.querySelectorAll('tr');
-            
-            if (rows.length <= 1) {
-                showToast('داده‌ای برای export وجود ندارد', true);
-                return;
-            }
-            
-            // Prepare data
-            const data = [];
-            
-            // Add headers
-            const headers = [];
-            rows[0].querySelectorAll('th').forEach(th => {
-                headers.push(th.textContent);
-            });
-            data.push(headers);
-            
-            // Add rows
-            for (let i = 1; i < rows.length; i++) {
-                const row = [];
-                rows[i].querySelectorAll('td').forEach(td => {
-                    row.push(td.textContent);
-                });
-                data.push(row);
-            }
-            
-            // Create workbook
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            
-            // Set right-to-left direction for the sheet
-            if (!ws['!views']) ws['!views'] = [];
-            ws['!views'].push({rtl: true});
-            
-            XLSX.utils.book_append_sheet(wb, ws, 'گزارش غذا');
-            
-            // Export
-            XLSX.writeFile(wb, 'گزارش_غذا.xlsx');
-        }
-        
-        // Load foods for settings
-        function loadFoods() {
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            const container = document.getElementById('food-list');
-            
-            container.innerHTML = '';
-            
-            if (foods.length === 0) {
-                container.innerHTML = '<p>هیچ غذایی ثبت نشده است</p>';
-                return;
-            }
-            
-            foods.forEach((food, index) => {
-                const div = document.createElement('div');
-                div.className = 'food-item';
-                div.innerHTML = `
-                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="flex: 1;">${food}</span>
-                        <button type="button" class="btn remove-food" onclick="removeFood('${food}')">حذف</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-        
-        // Add food
-        function addFood() {
-            const foodInput = document.getElementById('new-food');
-            const foodName = foodInput.value.trim();
-            
-            if (!foodName) {
-                showToast('لطفاً نام غذا را وارد کنید', true);
-                return;
-            }
-            
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            
-            if (foods.includes(foodName)) {
-                showToast('این غذا قبلاً ثبت شده است', true);
-                return;
-            }
-            
-            foods.push(foodName);
-            localStorage.setItem('foods', JSON.stringify(foods));
-            
-            foodInput.value = '';
-            loadFoods();
-            showToast('غذا با موفقیت اضافه شد');
-        }
-        
-        // Remove food
-        function removeFood(foodName) {
-            const foods = JSON.parse(localStorage.getItem('foods'));
-            const updatedFoods = foods.filter(food => food !== foodName);
-            
-            localStorage.setItem('foods', JSON.stringify(updatedFoods));
-            loadFoods();
-            showToast('غذا با موفقیت حذف شد');
-        }
-        
-        // Load restaurants for settings
-        function loadRestaurantsForSettings() {
-            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
-            const container = document.getElementById('restaurant-list');
-            
-            container.innerHTML = '';
-            
-            if (restaurants.length === 0) {
-                container.innerHTML = '<p>هیچ رستورانی ثبت نشده است</p>';
-                return;
-            }
-            
-            restaurants.forEach((restaurant, index) => {
-                const div = document.createElement('div');
-                div.className = 'food-item';
-                div.innerHTML = `
-                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="flex: 1;">${restaurant}</span>
-                        <button type="button" class="btn remove-food" onclick="removeRestaurant('${restaurant}')">حذف</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-        
-        // Add restaurant
-        function addRestaurant() {
-            const restaurantInput = document.getElementById('new-restaurant');
-            const restaurantName = restaurantInput.value.trim();
-            
-            if (!restaurantName) {
-                showToast('لطفاً نام رستوران را وارد کنید', true);
-                return;
-            }
-            
-            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
-            
-            if (restaurants.includes(restaurantName)) {
-                showToast('این رستوران قبلاً ثبت شده است', true);
-                return;
-            }
-            
-            restaurants.push(restaurantName);
-            localStorage.setItem('restaurants', JSON.stringify(restaurants));
-            
-            restaurantInput.value = '';
-            loadRestaurantsForSettings();
-            showToast('رستوران با موفقیت اضافه شد');
-        }
-        
-        // Remove restaurant
-        function removeRestaurant(restaurantName) {
-            const restaurants = JSON.parse(localStorage.getItem('restaurants'));
-            const updatedRestaurants = restaurants.filter(r => r !== restaurantName);
-            
-            localStorage.setItem('restaurants', JSON.stringify(updatedRestaurants));
-            loadRestaurantsForSettings();
-            showToast('رستوران با موفقیت حذف شد');
-        }
-        
-        // Load cities for settings
-        function loadCitiesForSettings() {
-            const cities = JSON.parse(localStorage.getItem('cities'));
-            const container = document.getElementById('city-list');
-            
-            container.innerHTML = '';
-            
-            if (cities.length === 0) {
-                container.innerHTML = '<p>هیچ شهرستانی ثبت نشده است</p>';
-                return;
-            }
-            
-            cities.forEach((city, index) => {
-                const div = document.createElement('div');
-                div.className = 'food-item';
-                div.innerHTML = `
-                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="flex: 1;">${city}</span>
-                        <button type="button" class="btn remove-food" onclick="removeCity('${city}')">حذف</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-        
-        // Add city
-        function addCity() {
-            const cityInput = document.getElementById('new-city');
-            const cityName = cityInput.value.trim();
-            
-            if (!cityName) {
-                showToast('لطفاً نام شهرستان را وارد کنید', true);
-                return;
-            }
-            
-            const cities = JSON.parse(localStorage.getItem('cities'));
-            
-            if (cities.includes(cityName)) {
-                showToast('این شهرستان قبلاً ثبت شده است', true);
-                return;
-            }
-            
-            cities.push(cityName);
-            localStorage.setItem('cities', JSON.stringify(cities));
-            
-            cityInput.value = '';
-            loadCitiesForSettings();
-            showToast('شهرستان با موفقیت اضافه شد');
-        }
-        
-        // Remove city
-        function removeCity(cityName) {
-            const cities = JSON.parse(localStorage.getItem('cities'));
-            const updatedCities = cities.filter(c => c !== cityName);
-            
-            localStorage.setItem('cities', JSON.stringify(updatedCities));
-            loadCitiesForSettings();
-            showToast('شهرستان با موفقیت حذف شد');
-        }
-        
-        // Load admin settings
-        function loadAdminSettings() {
-            const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
-            
-            document.getElementById('admin-name').value = adminSettings.adminName || '';
-            
-            const signaturePreview = document.getElementById('signature-preview');
-            if (adminSettings.signature) {
-                signaturePreview.src = adminSettings.signature;
-                signaturePreview.style.display = 'block';
-            } else {
-                signaturePreview.style.display = 'none';
-            }
-            
-            // Handle signature upload
-            document.getElementById('signature-upload').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    signaturePreview.src = event.target.result;
-                    signaturePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-        
-        // Save admin settings
-        function saveAdminSettings() {
-            const adminName = document.getElementById('admin-name').value;
-            const signaturePreview = document.getElementById('signature-preview');
-            
-            const adminSettings = {
-                adminName,
-                signature: signaturePreview.style.display !== 'none' ? signaturePreview.src : ''
-            };
-            
-            localStorage.setItem('adminSettings', JSON.stringify(adminSettings));
-            showToast('تنظیمات با موفقیت ذخیره شد');
-        }
-        
-        // Load profile
-        function loadProfile() {
-    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
-    const users = JSON.parse(localStorage.getItem('users'));
-    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
-    const userActivity = JSON.parse(localStorage.getItem('userActivity')) || {};
-    const requests = JSON.parse(localStorage.getItem('foodRequests'));
-
-    document.getElementById('profile-username').textContent = currentUser.username;
-    document.getElementById('profile-display-name').value = currentUser.displayName || '';
-
-    // Set profile picture if available
-    if (currentUser.profilePic) {
-        document.getElementById('profile-pic-large').src = currentUser.profilePic;
-        document.querySelectorAll('[id^="user-profile-pic"]').forEach(img => {
-            img.src = currentUser.profilePic;
-        });
-    }
-
-    if (userActivity[currentUser.username] && userActivity[currentUser.username].lastLogin) {
-        const lastLogin = new Date(userActivity[currentUser.username].lastLogin);
-        const persianDate = new PersianDate(lastLogin).format('YYYY/MM/DD HH:mm');
-        document.getElementById('profile-last-login').textContent = persianDate;
-    } else {
-        document.getElementById('profile-last-login').textContent = 'اطلاعاتی موجود نیست';
-    }
-
-    const userRequests = requests.filter(r => r.username === currentUser.username).length;
-    document.getElementById('profile-request-count').textContent = userRequests;
-}
-        
-        // Change password
-        document.getElementById('change-password-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const currentPassword = document.getElementById('current-password').value;
-    const newPassword = document.getElementById('new-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-
-    const activeUsername = localStorage.getItem('activeUser'); // اضافه کن
-    const users = JSON.parse(localStorage.getItem('users'));
-    const currentUser = users.find(u => u.username === activeUsername); // اصلاح این خط
-
-    if (currentUser.password !== currentPassword) {
-        showToast('رمز عبور فعلی اشتباه است', true);
-        return;
-    }
-
-    if (newPassword !== confirmPassword) {
-        showToast('رمز عبور جدید و تکرار آن مطابقت ندارند', true);
-        return;
-    }
-
-    currentUser.password = newPassword;
-    // ذخیره تغییرات در آرایه users
-    const updatedUsers = users.map(u => u.username === activeUsername ? currentUser : u);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-    this.reset();
-    showToast('رمز عبور با موفقیت تغییر یافت');
-});
-        
-        // Initialize the app
-        initializeStorage();
-        
-        // Show login section by default
-        showSection('login-section');
-        
-        // Ensure date pickers are properly initialized when jQuery is ready
-        $(document).ready(function() {
-            // Add click event to date input fields as backup
-            $('#report-start-date, #report-end-date').on('click', function() {
-                const inputId = this.id;
-                showDatePicker(inputId);
-            });
-            
-            // Test if persian-date library is loaded
-            if (typeof PersianDate === 'undefined') {
-                console.warn('PersianDate library not loaded, using fallback date picker');
-            } else {
-                console.log('PersianDate library loaded successfully');
-            }
-            
-            // Test if persian-datepicker library is loaded
-            if (typeof $.fn.pDatepicker === 'undefined') {
-                console.warn('Persian datepicker library not loaded, using fallback date picker');
-            } else {
-                console.log('Persian datepicker library loaded successfully');
-            }
-        });
-        // در انتهای اسکریپت اضافه کنید
-function exportAllData() {
-    const data = {
-        users: localStorage.getItem('users'),
-        foods: localStorage.getItem('foods'),
-        restaurants: localStorage.getItem('restaurants'),
-        cities: localStorage.getItem('cities'),
-        foodRequests: localStorage.getItem('foodRequests'),
-        adminSettings: localStorage.getItem('adminSettings'),
-        userActivity: localStorage.getItem('userActivity')
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'jr-ghaza-backup.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('فایل پشتیبان دانلود شد');
-}
-
-function importAllData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (data.users) localStorage.setItem('users', data.users);
-            if (data.foods) localStorage.setItem('foods', data.foods);
-            if (data.restaurants) localStorage.setItem('restaurants', data.restaurants);
-            if (data.cities) localStorage.setItem('cities', data.cities);
-            if (data.foodRequests) localStorage.setItem('foodRequests', data.foodRequests);
-            if (data.adminSettings) localStorage.setItem('adminSettings', data.adminSettings);
-            if (data.userActivity) localStorage.setItem('userActivity', data.userActivity);
-            showToast('اطلاعات با موفقیت بارگذاری شد');
-            location.reload();
-        } catch (err) {
-            showToast('خطا در بارگذاری فایل', true);
-        }
-    };
-    reader.readAsText(file);
-}
-document.getElementById('new-food-request-btn').addEventListener('click', function() {
-    document.getElementById('register-food-form').reset();
-    document.getElementById('companion-fields').innerHTML = '';
-    // ریست آیتم‌های غذا به یک مورد
-    const foodItemsContainer = document.getElementById('food-items');
-    foodItemsContainer.innerHTML = `
-        <div class="food-item">
-            <button type="button" class="btn remove-food" onclick="removeFoodItem(this)">حذف</button>
-            <select class="food-select">
-                <option value="">-- انتخاب غذا --</option>
-            </select>
-            <input type="number" class="food-count" min="1" value="1">
-        </div>
-    `;
-    loadFoodsForSelection();
-});
-function printFoodRequest(requestId) {
-    const requests = JSON.parse(localStorage.getItem('foodRequests'));
-    const request = requests.find(r => r.id.toString() === requestId.toString());
-    
-    if (request) {
-        generateFoodPDF(request);
-    } else {
-        showToast('درخواست مورد نظر یافت نشد', true);
-    }
-}
-    </script>
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
 </body>
 </html>
