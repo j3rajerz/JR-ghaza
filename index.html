@@ -1495,50 +1495,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     }
 });
 // ...existing code...
-       function playWelcomeSound() {
-    const audioPlayer = document.getElementById('audio-player');
-    
-    // تنظیمات اولیه برای بهبود تجربه کاربری
-    audioPlayer.volume = 0.5;
-    audioPlayer.preload = "auto";
-    
-    // تلاش برای پخش با مدیریت خطاها
-    const playPromise = audioPlayer.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.then(_ => {
-            // پخش موفقیت‌آمیز
-        })
-        .catch(error => {
-            console.log('پخش خودکار جلوگیری شد، نمایش دکمه پخش');
-            showPlayButton();
-        });
-    }
-}
-
-function showPlayButton() {
-    const playBtn = document.createElement('button');
-    playBtn.className = 'btn sound-btn';
-    playBtn.innerHTML = '<i class="fas fa-volume-up"></i> پخش صوت خوشامدگویی';
-    playBtn.onclick = function() {
-        document.getElementById('audio-player').play();
-        this.remove();
-    };
-    
-    const loginSection = document.getElementById('login-section');
-    if (loginSection) {
-        loginSection.appendChild(playBtn);
-    }
-}
-
-// در تابع showSection:
-function showSection(sectionId) {
-    // ... کدهای موجود
-    
-    if (sectionId === 'login-section') {
-        setTimeout(playWelcomeSound, 500);
-    }
-} 
+        
         // Logout functionality
         function logout() {
     localStorage.removeItem('activeUser'); // اضافه کن
@@ -1621,29 +1578,7 @@ function showSection(sectionId) {
             const currentCount = document.getElementById('companion-count');
             currentCount.value = parseInt(currentCount.value) - 1;
         }
-        // تابع بررسی وجود منابع
-function checkResources() {
-    const resources = [
-        'https://j3rajerz.github.io/JR-ghaza/GR-logo.png',
-        'https://j3rajerz.github.io/JR-ghaza/profile-placeholder.png',
-        'https://j3rajerz.github.io/JR-ghaza/welcome.mp3'
-    ];
-    
-    resources.forEach(resource => {
-        fetch(resource, { method: 'HEAD' })
-            .then(response => {
-                if (!response.ok) {
-                    console.error(`منبع یافت نشد: ${resource}`);
-                }
-            })
-            .catch(error => {
-                console.error(`خطا در بررسی منبع: ${resource}`, error);
-            });
-    });
-}
-
-// اجرای بررسی هنگام بارگذاری صفحه
-window.addEventListener('DOMContentLoaded', checkResources);
+        
         // Add food item to the form
         function addFoodItem() {
             const container = document.getElementById('food-items');
@@ -1786,71 +1721,94 @@ window.addEventListener('DOMContentLoaded', checkResources);
         
         // Generate PDF for food request
         function generateFoodPDF(requestData = null) {
-    // تعیین منبع داده‌ها
-    const data = requestData || getFormData();
+    // اگر داده از طریق پارامتر نیامده، از فرم بخوان
+    let fullname, city, companionCount, restaurant, foodItems, date;
     
-    if (!data.fullname || !data.restaurant) {
-        showToast('لطفاً نام و رستوران را وارد کنید', true);
+    if (requestData) {
+        // استفاده از داده‌های ارسال شده
+        fullname = requestData.fullname;
+        city = requestData.city;
+        companionCount = requestData.companionCount;
+        restaurant = requestData.restaurant;
+        foodItems = requestData.foodItems;
+        date = new Date(requestData.date);
+    } else {
+        // خواندن از فرم
+        fullname = document.getElementById('fullname').value.trim();
+        city = document.getElementById('city').value.trim();
+        companionCount = document.getElementById('companion-count').value;
+        restaurant = document.getElementById('restaurant').value.trim();
+        
+        // خواندن غذاها از فرم
+        foodItems = [];
+        document.querySelectorAll('.food-item').forEach(item => {
+            const foodSelect = item.querySelector('.food-select');
+            const foodCount = item.querySelector('.food-count');
+            const food = foodSelect ? foodSelect.value.trim() : '';
+            const count = foodCount ? foodCount.value : '';
+            if (food) {
+                foodItems.push({ food, count });
+            }
+        });
+        
+        date = new Date();
+    }
+
+    // اعتبارسنجی نهایی
+    if (!fullname || !restaurant || foodItems.length === 0) {
+        console.error("داده‌های ضروری پر نشده‌اند");
         return;
     }
 
-    // پر کردن اطلاعات PDF
-    fillPDFData(data);
-    
-    // نمایش و چاپ
-    showPrintSection();
-}
+    // پر کردن اطلاعات در بخش PDF
+    document.getElementById('pdf-fullname').textContent = fullname || 'ثبت نشده';
+    document.getElementById('pdf-city').textContent = city || 'ثبت نشده';
+    document.getElementById('pdf-companion-count').textContent = companionCount || '0';
+    document.getElementById('pdf-restaurant').textContent = restaurant;
 
-function getFormData() {
-    return {
-        fullname: document.getElementById('fullname').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        companionCount: document.getElementById('companion-count').value,
-        restaurant: document.getElementById('restaurant').value.trim(),
-        foodItems: getFoodItemsFromForm(),
-        date: new Date()
-    };
-}
+    // تاریخ شمسی
+    let persianDate;
+    if (typeof PersianDate !== 'undefined') {
+        persianDate = new PersianDate(date).format('YYYY/MM/DD HH:mm');
+    } else {
+        // Fallback به تاریخ میلادی
+        persianDate = date.toLocaleString('fa-IR');
+    }
+    document.getElementById('pdf-date').textContent = persianDate;
 
-function getFoodItemsFromForm() {
-    const items = [];
-    document.querySelectorAll('.food-item').forEach(item => {
-        const food = item.querySelector('.food-select')?.value.trim();
-        const count = item.querySelector('.food-count')?.value;
-        if (food) items.push({ food, count });
-    });
-    return items;
-}
-
-function fillPDFData(data) {
-    document.getElementById('pdf-fullname').textContent = data.fullname;
-    document.getElementById('pdf-city').textContent = data.city || 'ثبت نشده';
-    document.getElementById('pdf-companion-count').textContent = data.companionCount || '0';
-    document.getElementById('pdf-restaurant').textContent = data.restaurant;
-    
-    // نمایش تاریخ
-    const dateStr = typeof PersianDate !== 'undefined' 
-        ? new PersianDate(data.date).format('YYYY/MM/DD HH:mm')
-        : data.date.toLocaleString('fa-IR');
-    document.getElementById('pdf-date').textContent = dateStr;
-    
-    // نمایش غذاها
+    // لیست غذاها
     const foodList = document.getElementById('pdf-foods');
     foodList.innerHTML = '';
-    data.foodItems.forEach(item => {
+    foodItems.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = `${item.food} (${item.count})`;
+        li.textContent = `${item.food} (${item.count} عدد)`;
         foodList.appendChild(li);
     });
-}
 
-function showPrintSection() {
+    // اطلاعات مسئول و امضا
+    const adminSettings = JSON.parse(localStorage.getItem('adminSettings'));
+    document.getElementById('pdf-admin-name').textContent = adminSettings.adminName || 'مسئول امور اداری';
+    
+    const signatureImg = document.getElementById('pdf-signature');
+    if (adminSettings.signature) {
+        signatureImg.src = adminSettings.signature;
+        signatureImg.style.display = 'block';
+    } else {
+        signatureImg.style.display = 'none';
+    }
+
+    // نمایش بخش چاپ و پرینت
     document.getElementById('pdf-print-section').classList.remove('hidden');
+    
+    // تأخیر برای اطمینان از رندر شدن کامل قبل از پرینت
     setTimeout(() => {
         window.print();
-        document.getElementById('pdf-print-section').classList.add('hidden');
+        document.getElementById('pdf-print-section').classlassList.add('hidden');
     }, 500);
 }
+
+
+
         // Load reports
         function loadReports() {
             const requests = JSON.parse(localStorage.getItem('foodRequests'));
